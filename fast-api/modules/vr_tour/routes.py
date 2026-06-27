@@ -275,13 +275,16 @@ async def _process_session(session_id: str) -> None:
         session["frames"].sort(key=lambda f: f["index"])
         frame_paths = [f["path"] for f in session["frames"]]
 
-        # 2. Run stitching (CPU-intensive — run in executor)
+        # 2. Run stitching (CPU-intensive — run in executor).
+        #    Pass the per-frame gyro orientation so Hugin can seed image
+        #    positions (robust on featureless interiors).
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             None,
             panorama_stitcher.stitch,
             frame_paths,
             session["temp_dir"],
+            session["frames"],  # orientations: [{path, yaw, pitch, index}, ...]
             settings.PANORAMA_QUALITY,
         )
 

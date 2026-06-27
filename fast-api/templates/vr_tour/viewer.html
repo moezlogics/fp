@@ -2,379 +2,236 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <title>360° Virtual Tour — {{ restaurant_name }} | Foodies Pakistan</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+
+    <!-- Photo Sphere Viewer (core + plugins) — professional 360 viewer -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.14.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.14.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5.14.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/virtual-tour-plugin@5.14.3/index.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --fp-orange: #ff6b35;
-            --fp-dark: #0a0a0f;
-        }
+        :root { --fp-orange: #ff6b35; --fp-dark: #0a0a0f; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: var(--fp-dark); }
-        
-        /* Viewer fills entire viewport */
-        #panorama-viewer {
-            width: 100vw;
-            height: 100vh;
-            position: fixed;
-            top: 0; left: 0;
-        }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: var(--fp-dark); font-family: 'Inter', sans-serif; }
 
-        /* Branding Bar */
+        #panorama-viewer { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
+
+        /* Branding bar */
         .brand-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            padding-top: max(12px, env(safe-area-inset-top));
-            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 18px; padding-top: max(12px, env(safe-area-inset-top));
+            background: linear-gradient(to bottom, rgba(0,0,0,0.65), transparent);
             pointer-events: none;
         }
         .brand-bar > * { pointer-events: auto; }
-
-        .brand-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .brand-name {
-            font-family: 'Inter', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-        }
-        .brand-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--fp-orange);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
+        .brand-info { display: flex; flex-direction: column; }
+        .brand-label { font-size: 10px; font-weight: 700; color: var(--fp-orange); text-transform: uppercase; letter-spacing: 1.6px; }
+        .brand-name { font-size: 16px; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
         .close-btn {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(255,255,255,0.12); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18); color: #fff; font-size: 18px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s;
         }
-        .close-btn:hover { background: rgba(255,255,255,0.2); }
+        .close-btn:hover { background: rgba(255,255,255,0.25); }
 
-        /* Scene name overlay */
-        .scene-label {
-            position: fixed;
-            bottom: 80px; left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: white;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        /* Scene selector (bottom) */
+        /* Scene selector (bottom thumbnails) */
         .scene-selector {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            z-index: 1000;
-            display: flex;
-            gap: 8px;
-            padding: 12px 16px;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            overflow-x: auto;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+            display: flex; gap: 8px; padding: 10px 14px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+            overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
         }
         .scene-selector::-webkit-scrollbar { display: none; }
-
-        .scene-card {
-            flex-shrink: 0;
-            width: 80px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
+        .scene-card { flex-shrink: 0; width: 84px; cursor: pointer; text-align: center; }
         .scene-card img {
-            width: 80px; height: 50px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid transparent;
-            transition: border 0.2s;
+            width: 84px; height: 52px; border-radius: 8px; object-fit: cover;
+            border: 2px solid transparent; transition: border .2s, box-shadow .2s; background:#222;
         }
-        .scene-card.active img {
-            border-color: var(--fp-orange);
-            box-shadow: 0 0 12px rgba(255,107,53,0.4);
-        }
+        .scene-card.active img { border-color: var(--fp-orange); box-shadow: 0 0 12px rgba(255,107,53,.45); }
         .scene-card span {
-            display: block;
-            font-family: 'Inter', sans-serif;
-            font-size: 10px;
-            color: rgba(255,255,255,0.6);
-            margin-top: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: block; font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .scene-card.active span { color: var(--fp-orange); }
 
-        /* Loading overlay */
+        /* Loading */
         .loading-overlay {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--fp-dark);
-            z-index: 2000;
-            transition: opacity 0.5s;
+            position: fixed; inset: 0; display: flex; flex-direction: column; gap: 14px;
+            align-items: center; justify-content: center; background: var(--fp-dark);
+            z-index: 200; transition: opacity .5s;
         }
         .loading-overlay.fade-out { opacity: 0; pointer-events: none; }
-        .loading-spinner {
-            width: 48px; height: 48px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--fp-orange);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
+        .loading-spinner { width: 46px; height: 46px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--fp-orange); border-radius: 50%; animation: spin .8s linear infinite; }
+        .loading-text { color: rgba(255,255,255,.6); font-size: 12px; font-weight: 600; letter-spacing: .5px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Pannellum overrides */
-        .pnlm-about-msg { display: none !important; }
-        .pnlm-controls { right: 10px !important; }
+        /* Info marker bubble */
+        .psv-info-marker {
+            background: rgba(10,10,15,.9); color: #fff; border: 1px solid var(--fp-orange);
+            padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 600;
+            max-width: 220px; backdrop-filter: blur(8px); box-shadow: 0 6px 20px rgba(0,0,0,.4);
+        }
+        /* Keep the PSV navbar above our bottom selector */
+        .psv-navbar { z-index: 110 !important; bottom: 76px !important; }
     </style>
 </head>
 <body>
-    <!-- Loading -->
     <div class="loading-overlay" id="loading">
         <div class="loading-spinner"></div>
+        <div class="loading-text">Loading 360° tour…</div>
     </div>
 
-    <!-- Brand Bar -->
     <div class="brand-bar">
         <div class="brand-info">
             <span class="brand-label">360° Virtual Tour</span>
-            <span class="brand-name" id="restaurant-name">{{ restaurant_name }}</span>
+            <span class="brand-name">{{ restaurant_name }}</span>
         </div>
         <button class="close-btn" id="close-btn" title="Close Tour">✕</button>
     </div>
 
-    <!-- Scene Name -->
-    <div class="scene-label" id="scene-label"></div>
-
-    <!-- Panorama Viewer -->
     <div id="panorama-viewer"></div>
-
-    <!-- Scene Selector -->
     <div class="scene-selector" id="scene-selector"></div>
 
     <script id="tour-data" type="application/json">
         {{ tour_data | safe }}
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-    <script>
-        // Tour data injected from server
-        const tourData = JSON.parse(document.getElementById("tour-data").textContent);
-        const scenes = tourData.scenes || [];
-        let viewer = null;
-        let activeSceneId = tourData.defaultSceneId || (scenes[0] && scenes[0].id);
 
-        // ── Build Pannellum config ──
-        function buildConfig() {
-            const config = {
-                default: {
-                    type: "equirectangular",
-                    autoLoad: true,
-                    autoRotate: -2,
-                    autoRotateInactivityDelay: 3000,
-                    compass: true,
-                    showFullscreenCtrl: true,
-                    showZoomCtrl: true,
-                    hfov: 110,
-                    minHfov: 50,
-                    maxHfov: 120,
-                    friction: 0.15,
-                    mouseZoom: true,
-                    keyboardZoom: true,
-                    sceneFadeDuration: 1000,
-                },
-                scenes: {}
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+        "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.14.3/index.module.js",
+        "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.14.3/index.module.js",
+        "@photo-sphere-viewer/compass-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5.14.3/index.module.js",
+        "@photo-sphere-viewer/autorotate-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/autorotate-plugin@5.14.3/index.module.js",
+        "@photo-sphere-viewer/gyroscope-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/gyroscope-plugin@5.14.3/index.module.js",
+        "@photo-sphere-viewer/virtual-tour-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/virtual-tour-plugin@5.14.3/index.module.js"
+      }
+    }
+    </script>
+
+    <script type="module">
+        import { Viewer } from '@photo-sphere-viewer/core';
+        import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+        import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+        import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin';
+        import { GyroscopePlugin } from '@photo-sphere-viewer/gyroscope-plugin';
+        import { VirtualTourPlugin } from '@photo-sphere-viewer/virtual-tour-plugin';
+
+        const tourData = JSON.parse(document.getElementById('tour-data').textContent);
+        const scenes = Array.isArray(tourData.scenes) ? tourData.scenes : [];
+        const startNodeId = tourData.defaultSceneId || (scenes[0] && scenes[0].id);
+
+        const deg = (v) => `${Number(v) || 0}deg`;
+        const esc = (s) => String(s || '').replace(/[&<>"']/g, c => (
+            { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+        ));
+
+        // ── Build Virtual-Tour nodes (room-to-room) ──
+        const nodes = scenes.map((scene, i) => {
+            const links = [];
+            const sceneHs = (scene.hotspots || []).filter(h => h.type === 'scene' && h.targetSceneId);
+            if (sceneHs.length) {
+                sceneHs.forEach(h => links.push({
+                    nodeId: h.targetSceneId,
+                    position: { yaw: deg(h.yaw), pitch: deg(h.pitch) },
+                    name: h.text || 'Go',
+                }));
+            } else if (scenes.length > 1) {
+                // Auto-link next / previous when no hotspots were authored.
+                if (i < scenes.length - 1) links.push({ nodeId: scenes[i + 1].id, position: { yaw: deg(90), pitch: deg(0) }, name: scenes[i + 1].name || 'Next' });
+                if (i > 0) links.push({ nodeId: scenes[i - 1].id, position: { yaw: deg(-90), pitch: deg(0) }, name: scenes[i - 1].name || 'Back' });
+            }
+            const markers = (scene.hotspots || []).filter(h => h.type === 'info').map((h, idx) => ({
+                id: `m-${scene.id}-${idx}`,
+                position: { yaw: deg(h.yaw), pitch: deg(h.pitch) },
+                html: `<div class="psv-info-marker">${esc(h.text)}</div>`,
+                anchor: 'bottom center',
+                tooltip: h.text ? { content: esc(h.text) } : undefined,
+            }));
+            return {
+                id: scene.id,
+                panorama: scene.panoramaUrl,
+                thumbnail: scene.thumbnailUrl,
+                name: scene.name,
+                caption: scene.name,
+                links,
+                markers,
             };
+        });
 
-            scenes.forEach((scene, i) => {
-                const sceneConfig = {
-                    title: scene.name,
-                    panorama: scene.panoramaUrl,
-                    preview: scene.thumbnailUrl,
-                    hotSpots: [],
-                };
+        const startScene = scenes.find(s => s.id === startNodeId) || scenes[0];
+        const iv = (startScene && startScene.initialView) || {};
 
-                // Initial view
-                if (scene.initialView) {
-                    sceneConfig.pitch = scene.initialView.pitch || 0;
-                    sceneConfig.yaw = scene.initialView.yaw || 0;
-                    sceneConfig.hfov = scene.initialView.hfov || 110;
-                }
+        const viewer = new Viewer({
+            container: 'panorama-viewer',
+            caption: '{{ restaurant_name }}',
+            loadingImg: null,
+            defaultYaw: deg(iv.yaw || 0),
+            defaultPitch: deg(iv.pitch || 0),
+            defaultZoomLvl: 35,
+            minFov: 30,
+            maxFov: 100,
+            mousewheelCtrlKey: false,
+            touchmoveTwoFingers: false,
+            navbar: ['zoom', 'move', 'gyroscope', 'autorotate', 'caption', 'fullscreen'],
+            plugins: [
+                MarkersPlugin,
+                [AutorotatePlugin, { autostartDelay: 3500, autorotateSpeed: '0.4rpm', autorotatePitch: '2deg' }],
+                GyroscopePlugin,
+                [CompassPlugin, { size: '84px', position: 'top right' }],
+                [VirtualTourPlugin, {
+                    positionMode: 'manual',
+                    renderMode: '3d',          // immersive on-floor link arrows
+                    nodes,
+                    startNodeId,
+                    transitionOptions: { showLoader: true, speed: '12rpm', fadeIn: true, rotation: true },
+                }],
+            ],
+        });
 
-                // Add hotspots
-                if (scene.hotspots) {
-                    scene.hotspots.forEach(hs => {
-                        if (hs.type === "scene" && hs.targetSceneId) {
-                            sceneConfig.hotSpots.push({
-                                pitch: hs.pitch || 0,
-                                yaw: hs.yaw || 0,
-                                type: "scene",
-                                text: hs.text || "→",
-                                sceneId: hs.targetSceneId,
-                                cssClass: "custom-hotspot",
-                            });
-                        } else if (hs.type === "info") {
-                            sceneConfig.hotSpots.push({
-                                pitch: hs.pitch || 0,
-                                yaw: hs.yaw || 0,
-                                type: "info",
-                                text: hs.text || "",
-                            });
-                        }
-                    });
-                }
+        const virtualTour = viewer.getPlugin(VirtualTourPlugin);
 
-                // Auto-link to next/prev scenes if no manual hotspots
-                if (sceneConfig.hotSpots.length === 0 && scenes.length > 1) {
-                    if (i < scenes.length - 1) {
-                        sceneConfig.hotSpots.push({
-                            pitch: 0, yaw: 90, type: "scene",
-                            text: scenes[i + 1].name || "Next →",
-                            sceneId: scenes[i + 1].id,
-                        });
-                    }
-                    if (i > 0) {
-                        sceneConfig.hotSpots.push({
-                            pitch: 0, yaw: -90, type: "scene",
-                            text: "← " + (scenes[i - 1].name || "Previous"),
-                            sceneId: scenes[i - 1].id,
-                        });
-                    }
-                }
-
-                config.scenes[scene.id] = sceneConfig;
-            });
-
-            return config;
-        }
-
-        // ── Initialize Viewer ──
-        function initViewer() {
-            if (scenes.length === 0) return;
-
-            const config = buildConfig();
-            
-            viewer = pannellum.viewer("panorama-viewer", {
-                ...config.default,
-                firstScene: activeSceneId,
-                scenes: config.scenes,
-            });
-
-            // Scene change event
-            viewer.on("scenechange", (sceneId) => {
-                activeSceneId = sceneId;
-                updateSceneLabel(sceneId);
-                updateSceneSelector(sceneId);
-            });
-
-            // Load event
-            viewer.on("load", () => {
-                const loading = document.getElementById("loading");
-                loading.classList.add("fade-out");
-                setTimeout(() => loading.style.display = "none", 500);
-
-                updateSceneLabel(activeSceneId);
-            });
-
-            // Build scene selector
-            buildSceneSelector();
-        }
-
-        // ── Scene Label ──
-        function updateSceneLabel(sceneId) {
-            const scene = scenes.find(s => s.id === sceneId);
-            const label = document.getElementById("scene-label");
-            if (scene) {
-                label.textContent = scene.name;
-                label.style.opacity = "1";
-            }
-        }
-
-        // ── Scene Selector ──
-        function buildSceneSelector() {
-            const selector = document.getElementById("scene-selector");
-            if (scenes.length <= 1) {
-                selector.style.display = "none";
-                return;
-            }
-
-            selector.innerHTML = "";
+        // ── Bottom scene selector ──
+        const selector = document.getElementById('scene-selector');
+        function buildSelector() {
+            if (scenes.length <= 1) { selector.style.display = 'none'; return; }
+            selector.innerHTML = '';
             scenes.forEach(scene => {
-                const card = document.createElement("div");
-                card.className = `scene-card ${scene.id === activeSceneId ? "active" : ""}`;
-                card.innerHTML = `
-                    <img src="${scene.thumbnailUrl}" alt="${scene.name}" loading="lazy">
-                    <span>${scene.name}</span>
-                `;
-                card.onclick = () => {
-                    if (viewer && scene.id !== activeSceneId) {
-                        viewer.loadScene(scene.id);
-                    }
-                };
+                const card = document.createElement('div');
+                card.className = `scene-card ${scene.id === startNodeId ? 'active' : ''}`;
+                card.dataset.id = scene.id;
+                card.innerHTML = `<img src="${scene.thumbnailUrl}" alt="${esc(scene.name)}" loading="lazy"><span>${esc(scene.name)}</span>`;
+                card.onclick = () => virtualTour.setCurrentNode(scene.id);
                 selector.appendChild(card);
             });
         }
-
-        function updateSceneSelector(activeId) {
-            document.querySelectorAll(".scene-card").forEach(card => {
-                card.classList.remove("active");
-            });
-            const cards = document.querySelectorAll(".scene-card");
-            scenes.forEach((s, i) => {
-                if (s.id === activeId && cards[i]) {
-                    cards[i].classList.add("active");
-                }
-            });
+        function markActive(id) {
+            selector.querySelectorAll('.scene-card').forEach(c =>
+                c.classList.toggle('active', c.dataset.id === id));
         }
+        buildSelector();
 
-        // ── Close Button ──
-        document.getElementById("close-btn").onclick = () => {
-            // Send message to parent (iframe) or go back
-            if (window.parent !== window) {
-                window.parent.postMessage({ type: "CLOSE_VR_TOUR" }, "*");
-            } else {
-                window.history.back();
-            }
+        virtualTour.addEventListener('node-changed', ({ node }) => markActive(node.id));
+
+        viewer.addEventListener('ready', () => {
+            const loading = document.getElementById('loading');
+            loading.classList.add('fade-out');
+            setTimeout(() => (loading.style.display = 'none'), 500);
+        }, { once: true });
+
+        // ── Close (iframe-aware) ──
+        document.getElementById('close-btn').onclick = () => {
+            if (window.parent !== window) window.parent.postMessage({ type: 'CLOSE_VR_TOUR' }, '*');
+            else window.history.back();
         };
-
-        // ── Init ──
-        initViewer();
     </script>
 </body>
 </html>

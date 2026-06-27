@@ -4,10 +4,15 @@
  * Google Street View-style guided photo capture with 3-ring system.
  * Uses phone gyroscope + camera for auto-snap when aligned.
  * 
- * Ring 1 (Horizon):  12 shots at pitch=0°, every 30° yaw
- * Ring 2 (Upper):     8 shots at pitch=+35°, every 45° yaw
- * Ring 3 (Lower):     8 shots at pitch=-35°, every 45° yaw
- * Total:             28 shots with ~40% overlap
+ * Ring 1 (Horizon):  12 shots at pitch=0°,  every 30° yaw
+ * Ring 2 (Upper):      8 shots at pitch=+50°, every 45° yaw
+ * Ring 3 (Lower):      8 shots at pitch=-50°, every 45° yaw
+ * Ring 4 (Ceiling):    2 shots at pitch=+85° (zenith cap)
+ * Total:              30 shots — fuller vertical coverage so the stitched
+ *                     equirectangular has far smaller black caps at the poles.
+ *
+ * NOTE: device-orientation (compass/gyro) reliability varies by phone/OS and
+ * needs on-device QA; webkitCompassHeading can further improve iOS yaw.
  */
 
 // ═══ State ═══
@@ -35,16 +40,23 @@ const RINGS = [
     },
     {
         name: "Upper",
-        pitch: 35,
+        pitch: 50,
         count: 8,
         yawStep: 45,
         targets: [],
     },
     {
         name: "Lower",
-        pitch: -35,
+        pitch: -50,
         count: 8,
         yawStep: 45,
+        targets: [],
+    },
+    {
+        name: "Ceiling",
+        pitch: 85,
+        count: 2,
+        yawStep: 180,
         targets: [],
     },
 ];
@@ -98,7 +110,8 @@ async function requestPermissions() {
         document.getElementById("permission-gate").classList.add("hidden");
         document.getElementById("capture-view").classList.remove("hidden");
 
-        // 5. Initialize compass dots
+        // 5. Initialize ring progress + compass dots
+        buildRingProgress();
         updateCompassDots();
         updateRingUI();
 
@@ -118,9 +131,18 @@ let rawAlpha = 0, rawBeta = 0, rawGamma = 0;
 let alphaOffset = null;
 
 function onDeviceOrientation(e) {
-    if (e.alpha === null) return;
-
-    rawAlpha = e.alpha;  // 0-360 compass
+    // Prefer iOS's webkitCompassHeading — it is a calibrated absolute heading
+    // (0 = magnetic north, clockwise) and far more reliable than `alpha`, which
+    // on iOS is relative/unstable. Convert it to the same counter-clockwise sense
+    // as Android's `alpha` so the rest of the alignment logic is unchanged.
+    // (Sign may need a final tweak after on-device QA.)
+    if (typeof e.webkitCompassHeading === "number" && !Number.isNaN(e.webkitCompassHeading)) {
+        rawAlpha = (360 - e.webkitCompassHeading) % 360;
+    } else if (e.alpha !== null && e.alpha !== undefined) {
+        rawAlpha = e.alpha;  // 0-360 compass (Android)
+    } else {
+        return;
+    }
     rawBeta = e.beta;    // -180 to 180 (front-back tilt)
     rawGamma = e.gamma;  // -90 to 90 (left-right tilt)
 
@@ -361,6 +383,24 @@ function advanceRing() {
 
     updateRingUI();
     updateCompassDots();
+}
+
+function buildRingProgress() {
+    const container = document.getElementById("ring-progress");
+    if (!container) return;
+    container.innerHTML = "";
+    RINGS.forEach((ring, i) => {
+        if (i > 0) {
+            const conn = document.createElement("div");
+            conn.className = "ring-connector";
+            container.appendChild(conn);
+        }
+        const step = document.createElement("div");
+        step.className = "ring-step" + (i === 0 ? " active" : "");
+        step.id = `ring-step-${i + 1}`;
+        step.innerHTML = `<div class="ring-dot"></div><span>${ring.name}</span>`;
+        container.appendChild(step);
+    });
 }
 
 function updateRingUI() {

@@ -1,8 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Smartphone, Monitor, Compass, Navigation } from "lucide-react";
+import { Smartphone, Compass, Navigation } from "lucide-react";
+
+// Photo Sphere Viewer v5 styles (bundled — needs `npm install`).
+import "@photo-sphere-viewer/core/index.css";
+import "@photo-sphere-viewer/markers-plugin/index.css";
 
 interface VirtualTourViewerProps {
     scenes: any[];
@@ -12,229 +15,178 @@ interface VirtualTourViewerProps {
     hideChrome?: boolean;
 }
 
+const deg = (v: any) => `${Number(v) || 0}deg`;
+
 /**
- * VirtualTourViewer — Immersive 3D World.
- * 
- * INNOVATIVE FEATURES:
- * 1. Gyroscope Orientation (Look around by moving phone).
- * 2. Mobile VR / Stereo Mode (Split screen for headsets).
- * 3. Progressive Loading (Blur-to-sharp).
- * 4. Premium Navigation HUD.
+ * VirtualTourViewer — Photo Sphere Viewer v5 (ESM) immersive 360° tour.
+ *
+ * Was previously broken: it loaded the v5 npm package from a CDN <script> but
+ * called it through the v4 UMD global (`window.PhotoSphereViewer`) with a mix
+ * of v4 + v5 options — so it never initialised. This is a clean v5 rewrite:
+ * proper ESM imports, correct v5 API, in-place scene switching, gyroscope and
+ * autorotate plugins, and marker-driven room-to-room navigation.
  */
-export const VirtualTourViewer: React.FC<VirtualTourViewerProps> = ({ 
-    scenes, 
-    onClose, 
+export const VirtualTourViewer: React.FC<VirtualTourViewerProps> = ({
+    scenes,
+    onClose,
     initialSceneIndex = 0,
     hideChrome = false,
 }) => {
-    const viewerRef = useRef<HTMLDivElement>(null);
-    const psvInstanceRef = useRef<any>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const viewerRef = useRef<any>(null);
+    const pluginsRef = useRef<any>(null);
+
     const [currentSceneIndex, setCurrentSceneIndex] = useState(initialSceneIndex);
     const [loading, setLoading] = useState(true);
-    const [isVR, setIsVR] = useState(false);
     const [isGyro, setIsGyro] = useState(false);
     const [autoRotate, setAutoRotate] = useState(true);
-    const [isPermissionRequested, setIsPermissionRequested] = useState(false);
 
-    const initViewer = useCallback(() => {
-        if (!viewerRef.current || !(window as any).PhotoSphereViewer) return;
+    // Build PSV markers for a scene from its hotspots.
+    const buildMarkers = useCallback((scene: any) => {
+        return (scene?.hotspots || []).map((hs: any, index: number) => {
+            const isScene = hs.type === "scene";
+            const targetName = hs.targetSceneId
+                ? scenes.find((s: any) => s.id === hs.targetSceneId)?.name
+                : null;
+            return {
+                id: hs.id || `marker-${scene.id}-${index}`,
+                position: { yaw: deg(hs.yaw), pitch: deg(hs.pitch) },
+                html: isScene
+                    ? `<div style="width:48px;height:48px;border-radius:9999px;backdrop-filter:blur(12px);background:rgba(249,115,22,.82);border:2px solid rgba(255,255,255,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 20px rgba(249,115,22,.5)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+                        </div>`
+                    : `<div style="width:32px;height:32px;border-radius:9999px;backdrop-filter:blur(8px);background:rgba(99,102,241,.82);border:1px solid rgba(255,255,255,.35);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700">i</div>`,
+                tooltip: hs.text || targetName ? { content: hs.text || targetName } : undefined,
+                data: { targetSceneId: hs.targetSceneId },
+            };
+        });
+    }, [scenes]);
 
-        // Destroy previous instance
-        if (psvInstanceRef.current) {
-            try { psvInstanceRef.current.destroy(); } catch {}
-            psvInstanceRef.current = null;
-        }
+    // Imperatively switch panorama (no viewer re-creation).
+    const switchScene = useCallback((index: number) => {
+        const viewer = viewerRef.current;
+        const plugins = pluginsRef.current;
+        if (!viewer || !plugins || index === currentSceneIndex) return;
+        const scene = scenes[index];
+        if (!scene?.panoramaUrl) return;
 
-        const scene = scenes[currentSceneIndex];
-        if (!scene?.panoramaUrl) {
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const PSV = (window as any).PhotoSphereViewer;
-            const viewer = new PSV.Viewer({
-                container: viewerRef.current,
-                panorama: scene.panoramaUrl,
-                loadingImg: scene.thumbnailUrl || "https://photo-sphere-viewer.js.org/assets/loader.gif",
-                loadingTxt: "Loading high-res world...",
-                plugins: [
-                    [PSV.GyroscopePlugin, {
-                        absolutePosition: true,
-                    }],
-                    [PSV.StereoPlugin, {}],
-                    [(PSV as any).MarkersPlugin, {
-                        markers: scene.hotspots?.map((hs: any, index: number) => ({
-                            id: hs.id || `marker-${index}`,
-                            position: { pitch: hs.pitch || 0, yaw: hs.yaw || 0 },
-                            // Professional glassmorphic bouncy arrow marker for 'scene' switches
-                            html: hs.type === "scene" ? `
-                                <div class="w-12 h-12 rounded-full backdrop-blur-xl bg-orange-500/80 border-2 border-white/50 text-white flex items-center justify-center cursor-pointer shadow-[0_0_20px_rgba(249,115,22,0.5)] animate-bounce hover:scale-110 transition-transform hover:bg-orange-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
-                                </div>
-                            ` : `
-                                <div class="w-8 h-8 rounded-full backdrop-blur-md bg-indigo-500/80 border border-white/30 text-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-                                    <span class="font-bold text-sm">i</span>
-                                </div>
-                            `,
-                            tooltip: hs.text || (hs.targetSceneId ? scenes.find((s:any) => s.id === hs.targetSceneId)?.name : null),
-                            data: { targetSceneId: hs.targetSceneId }
-                        })) || []
-                    }],
-                ],
-                navbar: [
-                    "autorotate",
-                    "zoom",
-                    "caption",
-                    "fullscreen"
-                ],
-                caption: `<b>${scene.name}</b>`,
-                defaultZoomLvl: 0,
-                defaultLat: scene.initialView?.pitch || 0,
-                defaultLong: scene.initialView?.yaw || 0,
-                touchmoveTwoFingers: false,
-                mousewheelCtrlKey: false,
-                fisheye: true, // Professional wide-angle effect
-                autorotateDelay: 2000,
-                autorotateSpeed: "1rpm",
-            });
-
-            viewer.addEventListener("ready", () => {
+        setLoading(true);
+        viewer
+            .setPanorama(scene.panoramaUrl, {
+                caption: `<b>${scene.name || ""}</b>`,
+                transition: true,
+                showLoader: true,
+            })
+            .then(() => {
+                const markers = viewer.getPlugin(plugins.MarkersPlugin);
+                if (markers) markers.setMarkers(buildMarkers(scene));
+                setCurrentSceneIndex(index);
                 setLoading(false);
-                if (autoRotate) viewer.psv.startAutorotate();
-            });
+                if (autoRotate) viewer.getPlugin(plugins.AutorotatePlugin)?.start();
+            })
+            .catch(() => setLoading(false));
+    }, [currentSceneIndex, scenes, autoRotate, buildMarkers]);
 
-            // Handle hotspot clicks
-            const markersPlugin = viewer.getPlugin((PSV as any).MarkersPlugin);
-            if (markersPlugin) {
-                markersPlugin.addEventListener('select-marker', ({ marker }: any) => {
-                    if (marker.data?.targetSceneId) {
-                        const targetIndex = scenes.findIndex((s:any) => s.id === marker.data.targetSceneId);
-                        if (targetIndex !== -1) {
-                            // Switch scene
-                            if (psvInstanceRef.current) {
-                                psvInstanceRef.current.setPanorama(scenes[targetIndex].panoramaUrl, {
-                                    showLoader: true,
-                                    transition: 1000,
-                                    zoom: 0,
-                                }).then(() => {
-                                    setCurrentSceneIndex(targetIndex);
-                                    if (autoRotate) psvInstanceRef.current.startAutorotate();
-                                });
-                            }
-                        }
-                    }
-                });
-            }
-
-            psvInstanceRef.current = viewer;
-        } catch (err) {
-            console.error("[VirtualTourViewer] Init failed:", err);
-            setLoading(false);
-        }
-    }, [currentSceneIndex, scenes]);
-
-    // Handle VR Toggle
-    const toggleVR = () => {
-        if (!psvInstanceRef.current) return;
-        const stereo = psvInstanceRef.current.getPlugin((window as any).PhotoSphereViewer.StereoPlugin);
-        if (stereo) {
-            if (isVR) stereo.stop();
-            else stereo.start();
-            setIsVR(!isVR);
-        }
-    };
-
-    // Handle Gyro Toggle
-    const toggleGyro = async () => {
-        if (!psvInstanceRef.current) return;
-        
-        // iOS Permission Request
-        if (!isPermissionRequested && typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-            try {
-                const response = await (DeviceOrientationEvent as any).requestPermission();
-                setIsPermissionRequested(true);
-                if (response !== 'granted') return;
-            } catch (e) {
-                console.error("Gyro permission failed", e);
-                return;
-            }
-        }
-
-        const gyro = psvInstanceRef.current.getPlugin((window as any).PhotoSphereViewer.GyroscopePlugin);
-        if (gyro) {
-            if (isGyro) {
-                gyro.stop();
-                setIsGyro(false);
-            } else {
-                gyro.start().then(() => setIsGyro(true)).catch((e: any) => console.warn("Gyro start failed", e));
-            }
-        }
-    };
-
-    // Toggle Auto Rotate
-    const toggleAutoRotate = () => {
-        if (!psvInstanceRef.current) return;
-        if (autoRotate) psvInstanceRef.current.stopAutorotate();
-        else psvInstanceRef.current.startAutorotate();
-        setAutoRotate(!autoRotate);
-    };
-
+    // ── Create the viewer once ──
     useEffect(() => {
         let cancelled = false;
 
-        const loadScripts = async () => {
-            if ((window as any).PhotoSphereViewer?.GyroscopePlugin) {
-                if (!cancelled) initViewer();
-                return;
-            }
+        (async () => {
+            const [core, markersMod, gyroMod, autoMod] = await Promise.all([
+                import("@photo-sphere-viewer/core"),
+                import("@photo-sphere-viewer/markers-plugin"),
+                import("@photo-sphere-viewer/gyroscope-plugin"),
+                import("@photo-sphere-viewer/autorotate-plugin"),
+            ]);
+            if (cancelled || !containerRef.current) return;
 
-            const loadChain = [
-                { id: "psv-css", type: "link", href: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css" },
-                { id: "psv-markers-css", type: "link", href: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.css" },
-                { id: "three-js", type: "script", src: "https://cdn.jsdelivr.net/npm/three/build/three.min.js" },
-                { id: "psv-core", type: "script", src: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.js" },
-                { id: "psv-gyro", type: "script", src: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/gyroscope-plugin/index.min.js" },
-                { id: "psv-stereo", type: "script", src: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/stereo-plugin/index.min.js" },
-                { id: "psv-markers", type: "script", src: "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.js" },
-            ];
+            const { Viewer } = core;
+            const { MarkersPlugin } = markersMod;
+            const { GyroscopePlugin } = gyroMod;
+            const { AutorotatePlugin } = autoMod;
+            pluginsRef.current = { MarkersPlugin, GyroscopePlugin, AutorotatePlugin };
 
-            for (const item of loadChain) {
-                if (document.getElementById(item.id)) continue;
-                if (item.type === "link") {
-                    const l = document.createElement("link");
-                    l.id = item.id;
-                    l.rel = "stylesheet";
-                    l.href = item.href!;
-                    document.head.appendChild(l);
-                } else {
-                    const s = document.createElement("script");
-                    s.id = item.id;
-                    s.src = item.src!;
-                    document.head.appendChild(s);
-                    await new Promise(r => s.onload = r);
+            const first = scenes[initialSceneIndex] || scenes[0];
+            if (!first?.panoramaUrl) { setLoading(false); return; }
+
+            const viewer = new Viewer({
+                container: containerRef.current,
+                panorama: first.panoramaUrl,
+                caption: `<b>${first.name || ""}</b>`,
+                loadingTxt: "Loading 360°…",
+                defaultZoomLvl: 35,
+                defaultYaw: deg(first.initialView?.yaw || 0),
+                defaultPitch: deg(first.initialView?.pitch || 0),
+                minFov: 30,
+                maxFov: 100,
+                touchmoveTwoFingers: false,
+                mousewheelCtrlKey: false,
+                navbar: ["zoom", "move", "caption", "fullscreen"],
+                plugins: [
+                    [MarkersPlugin, { markers: buildMarkers(first) }],
+                    [GyroscopePlugin, {}],
+                    [AutorotatePlugin, { autostartDelay: 2500, autorotateSpeed: "0.5rpm", autorotatePitch: "2deg" }],
+                ],
+            });
+            viewerRef.current = viewer;
+
+            viewer.addEventListener("ready", () => { if (!cancelled) setLoading(false); }, { once: true });
+
+            const markers = viewer.getPlugin(MarkersPlugin);
+            markers?.addEventListener("select-marker", ({ marker }: any) => {
+                const target = marker?.config?.data?.targetSceneId ?? marker?.data?.targetSceneId;
+                if (target) {
+                    const idx = scenes.findIndex((s: any) => s.id === target);
+                    if (idx >= 0) switchScene(idx);
                 }
-            }
-
-            if (!cancelled) initViewer();
-        };
-
-        setLoading(true);
-        loadScripts();
+            });
+        })().catch((err) => {
+            console.error("[VirtualTourViewer] init failed:", err);
+            setLoading(false);
+        });
 
         return () => {
             cancelled = true;
-            if (psvInstanceRef.current) {
-                try { psvInstanceRef.current.destroy(); } catch {}
-                psvInstanceRef.current = null;
+            if (viewerRef.current) {
+                try { viewerRef.current.destroy(); } catch { /* noop */ }
+                viewerRef.current = null;
             }
         };
-    }, [initViewer]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Controls ──
+    const toggleGyro = async () => {
+        const viewer = viewerRef.current;
+        const plugins = pluginsRef.current;
+        if (!viewer || !plugins) return;
+        // iOS 13+ needs an explicit motion permission request.
+        const DOE = (typeof window !== "undefined" ? (window as any).DeviceOrientationEvent : null);
+        if (DOE && typeof DOE.requestPermission === "function") {
+            try {
+                const res = await DOE.requestPermission();
+                if (res !== "granted") return;
+            } catch { return; }
+        }
+        const gyro = viewer.getPlugin(plugins.GyroscopePlugin);
+        if (!gyro) return;
+        if (isGyro) { gyro.stop(); setIsGyro(false); }
+        else { gyro.start().then(() => setIsGyro(true)).catch(() => { }); }
+    };
+
+    const toggleAutoRotate = () => {
+        const viewer = viewerRef.current;
+        const plugins = pluginsRef.current;
+        if (!viewer || !plugins) return;
+        const ar = viewer.getPlugin(plugins.AutorotatePlugin);
+        if (!ar) return;
+        if (autoRotate) { ar.stop(); setAutoRotate(false); }
+        else { ar.start(); setAutoRotate(true); }
+    };
 
     return (
         <div className={`${hideChrome ? "w-full h-full relative" : "fixed inset-0 z-[110] bg-black flex flex-col"} font-sans`}>
-            
-            {/* Immersive Header */}
+
             {!hideChrome && (
                 <div className="absolute top-0 left-0 right-0 z-30 p-4 md:p-8 flex items-start justify-between pointer-events-none">
                     <div className="flex flex-col gap-4">
@@ -248,81 +200,45 @@ export const VirtualTourViewer: React.FC<VirtualTourViewerProps> = ({
                             </div>
                         </div>
 
-                        {/* Innovatve Controls: VR & Gyro */}
                         <div className="flex gap-2 pointer-events-auto">
-                            <button 
-                                onClick={toggleGyro}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${isGyro ? "bg-orange-500 border-orange-400 text-white shadow-lg shadow-orange-500/40" : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"}`}
-                            >
+                            <button onClick={toggleGyro}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${isGyro ? "bg-orange-500 border-orange-400 text-white shadow-lg shadow-orange-500/40" : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"}`}>
                                 <Smartphone className="w-3 h-3" />
                                 {isGyro ? "Gyro Active" : "Enable Gyro"}
                             </button>
-                            <button 
-                                onClick={toggleVR}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${isVR ? "bg-indigo-500 border-indigo-400 text-white shadow-lg shadow-indigo-500/40" : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"}`}
-                            >
-                                <Monitor className="w-3 h-3" />
-                                {isVR ? "VR Mode On" : "VR Mode"}
-                            </button>
-                            <button 
-                                onClick={toggleAutoRotate}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${autoRotate ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/40" : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"}`}
-                            >
+                            <button onClick={toggleAutoRotate}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all duration-300 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md ${autoRotate ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/40" : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"}`}>
                                 <Compass className="w-3 h-3" />
                                 {autoRotate ? "Auto-Rotate On" : "Cinematic Mode"}
                             </button>
                         </div>
                     </div>
 
-                    <button 
-                        onClick={onClose}
-                        className="w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 text-white backdrop-blur-xl border border-white/10 pointer-events-auto flex items-center justify-center transition-all hover:rotate-90 group"
-                    >
+                    <button onClick={onClose}
+                        className="w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 text-white backdrop-blur-xl border border-white/10 pointer-events-auto flex items-center justify-center transition-all hover:rotate-90 group">
                         <span className="text-2xl group-hover:scale-125 transition-transform">×</span>
                     </button>
                 </div>
             )}
 
-            {/* The Main 360 Canvas */}
-            <div ref={viewerRef} className="flex-1 w-full h-full cursor-grab active:cursor-grabbing bg-black" />
+            {/* 360 canvas */}
+            <div ref={containerRef} className="flex-1 w-full h-full cursor-grab active:cursor-grabbing bg-black" />
 
-            {/* Innovative Thumbnails (Floating Glass) */}
+            {/* Scene thumbnails */}
             {scenes.length > 1 && (
                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-end gap-4 p-4 backdrop-blur-2xl bg-black/20 rounded-[40px] border border-white/10 overflow-x-auto max-w-[95vw] sm:max-w-[80vw] z-30 shadow-2xl no-scrollbar">
                     {scenes.map((scene: any, i: number) => (
-                        <button
-                            key={i}
-                            onClick={() => {
-                                if (currentSceneIndex === i) return;
-                                if (psvInstanceRef.current) {
-                                    psvInstanceRef.current.setPanorama(scene.panoramaUrl, {
-                                        showLoader: true,
-                                        transition: 1000,
-                                        zoom: 0,
-                                    }).then(() => {
-                                        setCurrentSceneIndex(i);
-                                        if (autoRotate) psvInstanceRef.current.startAutorotate();
-                                    });
-                                } else {
-                                    setLoading(true);
-                                    setCurrentSceneIndex(i);
-                                }
-                            }}
-                            className={`group relative min-w-[100px] h-20 rounded-3xl overflow-hidden transition-all duration-500 border-2 ${
-                                currentSceneIndex === i ? "border-orange-500 scale-110 -translate-y-2 shadow-2xl shadow-orange-500/40" : "border-transparent opacity-40 hover:opacity-100 hover:-translate-y-1"
-                            }`}
-                        >
+                        <button key={i} onClick={() => switchScene(i)}
+                            className={`group relative min-w-[100px] h-20 rounded-3xl overflow-hidden transition-all duration-500 border-2 ${currentSceneIndex === i ? "border-orange-500 scale-110 -translate-y-2 shadow-2xl shadow-orange-500/40" : "border-transparent opacity-40 hover:opacity-100 hover:-translate-y-1"}`}>
                             <img src={scene.thumbnailUrl || scene.panoramaUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={scene.name} />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <span className="absolute bottom-2 left-0 right-0 text-[8px] font-black text-white uppercase tracking-tighter text-center">
-                                {scene.name}
-                            </span>
+                            <span className="absolute bottom-2 left-0 right-0 text-[8px] font-black text-white uppercase tracking-tighter text-center">{scene.name}</span>
                         </button>
                     ))}
                 </div>
             )}
 
-            {/* Progressive Loading State */}
+            {/* Loading */}
             {loading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-2xl z-40 transition-opacity duration-1000">
                     <div className="relative w-24 h-24 mb-6">
@@ -331,15 +247,10 @@ export const VirtualTourViewer: React.FC<VirtualTourViewerProps> = ({
                         <Compass className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-white/40" />
                     </div>
                     <h2 className="text-white font-black text-lg uppercase tracking-[0.4em] mb-2">IMMERSING</h2>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse">Syncing 360 Environment...</p>
-                    
-                    {/* Background Preview (Progressive) */}
+                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest animate-pulse">Syncing 360 Environment…</p>
                     {scenes[currentSceneIndex]?.thumbnailUrl && (
-                        <img 
-                            src={scenes[currentSceneIndex].thumbnailUrl} 
-                            className="absolute inset-0 w-full h-full object-cover -z-10 opacity-20 blur-3xl scale-150 animate-pulse" 
-                            alt="preview"
-                        />
+                        <img src={scenes[currentSceneIndex].thumbnailUrl}
+                            className="absolute inset-0 w-full h-full object-cover -z-10 opacity-20 blur-3xl scale-150 animate-pulse" alt="preview" />
                     )}
                 </div>
             )}

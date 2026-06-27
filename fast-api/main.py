@@ -9,7 +9,10 @@ Start:
     uvicorn main:app --host 0.0.0.0 --port 8500 --reload
 
 Production:
-    uvicorn main:app --host 0.0.0.0 --port 8500 --workers 2
+    # Single worker REQUIRED — capture session state + frames are held in memory
+    # on the receiving worker (see deploy-instructions.md). Scaling out needs
+    # Redis-backed sessions + shared frame storage first.
+    uvicorn main:app --host 0.0.0.0 --port 8500 --workers 1
 """
 
 import logging

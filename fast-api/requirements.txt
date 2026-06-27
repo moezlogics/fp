@@ -10,8 +10,14 @@ jinja2==3.1.4
 aiofiles==24.1.0       # For static file serving
 
 # VR Tour Module
-opencv-python-headless==4.10.0.84   # Panorama stitching (no GUI deps)
-Pillow==11.0.0                       # Image optimization (resize, WebP, thumbnails)
+# NOTE: 360° equirectangular stitching uses Hugin / panotools — a SYSTEM package
+#       (NOT pip). Install it on the host before running:
+#         sudo apt install -y hugin-tools enblend
+#       Binaries used: pto_gen, cpfind, cpclean, linefind, autooptimiser,
+#                      pano_modify, nona, enblend
+opencv-python-headless==4.10.0.84   # Post-processing: read blended TIFF → WebP + thumbnail
+numpy==1.26.4                        # Array ops in stitcher post-processing
+Pillow==11.0.0                       # Image utilities
 
 # HTTP Client (for CDN uploads & Node.js API calls)
 httpx==0.28.1
