@@ -1,0 +1,46 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Global environment files
+.env
+.env.*
+!.env.example
+!.env.template
+
+# System-wide dependencies and build output
+node_modules/
+dist/
+build/
+out/
+.next/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Archives (Must not commit massive ZIP/RAR backups)
+*.zip
+*.rar
+*.tar.gz
+*.tgz
+
+# Logs
+*.log
+logs/
+
+# Build caches
+*.tsbuildinfo
+
+# Deploy temporary sources
+.deploy-source/

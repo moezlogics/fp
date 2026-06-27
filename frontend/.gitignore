@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env.*
+!.env.example
+!.env.template
+*.log
+*.tsbuildinfo
+next-env.d.ts
+*.zip
+tsc_output.txt
+build_error.txt
+temp_search_results.txt

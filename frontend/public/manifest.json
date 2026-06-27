@@ -1,0 +1,32 @@
+{
+    "name": "Foodies Pakistan",
+    "short_name": "Foodies",
+    "description": "Best restaurant deals, menus, and reviews in Pakistan. Discover dining near you.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f3f4f6",
+    "theme_color": "#f97316",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "food",
+        "lifestyle",
+        "shopping"
+    ],
+    "lang": "en",
+    "dir": "ltr"
+}

@@ -1,0 +1,94 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /account
+Disallow: /account/
+Disallow: /my-bookings
+Disallow: /my-bookings/
+Disallow: /my-reviews
+Disallow: /my-reviews/
+Disallow: /saved
+Disallow: /saved/
+Disallow: /wallet
+Disallow: /wallet/
+Disallow: /order/
+Disallow: /refer
+Disallow: /refer/
+Disallow: /foodiepay
+Disallow: /foodiepay/
+Disallow: /payment/
+Disallow: /moezlogin/
+Disallow: /moezlogin
+Disallow: /owner/
+Disallow: /owner
+Disallow: /admin
+Disallow: /admin/
+Disallow: /search
+Disallow: /search/
+Disallow: /profile/
+Disallow: /profile
+
+User-Agent: Googlebot
+Allow: /
+
+User-Agent: Bingbot
+Allow: /
+
+User-Agent: Applebot
+Allow: /
+
+User-Agent: Google-Extended
+Allow: /
+
+User-Agent: GPTBot
+Allow: /
+
+User-Agent: ChatGPT-User
+Allow: /
+
+User-Agent: PerplexityBot
+Allow: /
+
+User-Agent: ClaudeBot
+Allow: /
+
+User-Agent: anthropic-ai
+Allow: /
+
+User-Agent: Bytespider
+Allow: /
+
+User-Agent: cohere-ai
+Allow: /
+
+User-Agent: CCBot
+Disallow: /
+
+User-Agent: MJ12bot
+Disallow: /
+
+User-Agent: DotBot
+Disallow: /
+
+User-Agent: BLEXBot
+Disallow: /
+
+User-Agent: DataForSeoBot
+Disallow: /
+
+User-Agent: PetalBot
+Disallow: /
+
+User-Agent: Seekport
+Disallow: /
+
+User-Agent: magpie-crawler
+Disallow: /
+
+User-Agent: Bytedance
+Disallow: /
+
+Sitemap: https://foodiespakistan.pk/sitemap.xml

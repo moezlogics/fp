@@ -1,0 +1,16 @@
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.env.*
+!.env.example
+!.env.template
+*.log
+*.zip
+*.rar

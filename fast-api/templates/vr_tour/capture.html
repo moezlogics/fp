@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>360° Capture — Foodies Pakistan</title>
+    <link rel="stylesheet" href="/static/vr_tour/css/capture.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ═══ Permission Gate ═══ -->
+    <div id="permission-gate" class="gate">
+        <div class="gate-content">
+            <div class="gate-icon">📱</div>
+            <h1>360° Capture</h1>
+            <p class="gate-scene-name">{{ scene_name }}</p>
+            <p class="gate-desc">
+                We need access to your camera and motion sensors to capture a professional 360° panorama.
+            </p>
+            <div class="gate-tips">
+                <div class="tip"><span class="tip-icon">📍</span> Stand in the center of the area</div>
+                <div class="tip"><span class="tip-icon">📏</span> Keep phone at eye level</div>
+                <div class="tip"><span class="tip-icon">🔄</span> Turn slowly — we'll auto-capture</div>
+                <div class="tip"><span class="tip-icon">💡</span> Ensure good lighting</div>
+            </div>
+            <button id="start-btn" class="btn-primary" onclick="requestPermissions()">
+                Start Capturing
+            </button>
+            <p class="gate-note">Works best on mobile with rear camera</p>
+        </div>
+    </div>
+
+    <!-- ═══ Camera + Capture View ═══ -->
+    <div id="capture-view" class="hidden">
+        <!-- Camera Feed -->
+        <video id="camera-feed" autoplay playsinline muted></video>
+        <canvas id="snap-canvas" class="hidden"></canvas>
+
+        <!-- Overlay Layer -->
+        <div id="overlay">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="ring-indicator">
+                    <span id="ring-label">Ring 1 / 3</span>
+                    <span id="ring-name">Horizon</span>
+                </div>
+                <div class="frame-counter">
+                    <span id="frame-count">0</span>
+                    <span class="frame-total">/ {{ max_frames }}</span>
+                </div>
+            </div>
+
+            <!-- Compass Rose (center) -->
+            <div id="compass-container">
+                <svg id="compass-svg" viewBox="0 0 300 300" class="compass">
+                    <!-- Background ring -->
+                    <circle cx="150" cy="150" r="130" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                    <!-- Target dots (dynamically generated) -->
+                    <g id="target-dots"></g>
+                    <!-- Aim indicator -->
+                    <circle id="aim-dot" cx="150" cy="150" r="12" fill="rgba(255,165,0,0.8)" stroke="white" stroke-width="2"/>
+                    <!-- Direction Labels -->
+                    <text x="150" y="30" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-weight="600">N</text>
+                    <text x="278" y="155" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="11">E</text>
+                    <text x="150" y="280" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="11">S</text>
+                    <text x="22" y="155" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="11">W</text>
+                </svg>
+                <!-- Alignment indicator -->
+                <div id="align-text" class="align-text">Point to the orange dot</div>
+            </div>
+
+            <!-- Ring Progress Bar -->
+            <div class="ring-progress">
+                <div class="ring-step done" id="ring-step-1">
+                    <div class="ring-dot"></div>
+                    <span>Horizon</span>
+                </div>
+                <div class="ring-connector"></div>
+                <div class="ring-step" id="ring-step-2">
+                    <div class="ring-dot"></div>
+                    <span>Upper</span>
+                </div>
+                <div class="ring-connector"></div>
+                <div class="ring-step" id="ring-step-3">
+                    <div class="ring-dot"></div>
+                    <span>Lower</span>
+                </div>
+            </div>
+
+            <!-- Photo Strip -->
+            <div id="photo-strip" class="photo-strip">
+                <!-- Thumbnails added dynamically -->
+            </div>
+
+            <!-- Manual Capture Button (backup) -->
+            <div class="bottom-controls">
+                <button id="manual-capture-btn" class="capture-btn" onclick="manualCapture()">
+                    <div class="capture-btn-ring"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Flash Effect -->
+        <div id="flash" class="flash"></div>
+    </div>
+
+    <!-- ═══ Review Screen ═══ -->
+    <div id="review-screen" class="hidden">
+        <div class="review-content">
+            <h2>📸 Capture Complete!</h2>
+            <p class="review-subtitle">{{ scene_name }}</p>
+            <div id="review-grid" class="review-grid">
+                <!-- Thumbnails populated dynamically -->
+            </div>
+            <p class="review-info">
+                <span id="review-count">0</span> photos captured. Ready to create your 360° panorama.
+            </p>
+            <div class="review-actions">
+                <button class="btn-secondary" onclick="restartCapture()">Recapture</button>
+                <button class="btn-primary" onclick="submitCapture()">
+                    ✨ Create 360° Tour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Upload Progress ═══ -->
+    <div id="upload-overlay" class="hidden">
+        <div class="upload-content">
+            <div class="upload-spinner"></div>
+            <h2>Uploading Frames...</h2>
+            <p id="upload-progress-text">0 / 0</p>
+            <div class="upload-bar-container">
+                <div id="upload-bar" class="upload-bar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Config from server ──
+        const SESSION_ID = "{{ session_id }}";
+        const SCENE_NAME = "{{ scene_name }}";
+        const MAX_FRAMES = {{ max_frames }};
+        const RESTAURANT_ID = "{{ restaurant_id }}";
+    </script>
+    <script src="/static/vr_tour/js/capture.js"></script>
+</body>
+</html>

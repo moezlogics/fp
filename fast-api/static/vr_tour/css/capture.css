@@ -1,0 +1,499 @@
+/* ══════════════════════════════════════════════════════════════
+   360° Capture UI — Foodies Pakistan
+   Premium dark immersive mobile-first design
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+    --fp-orange: #ff6b35;
+    --fp-orange-glow: rgba(255, 107, 53, 0.4);
+    --fp-dark: #0a0a0f;
+    --fp-card: rgba(255, 255, 255, 0.06);
+    --fp-border: rgba(255, 255, 255, 0.08);
+    --fp-text: #f0f0f5;
+    --fp-text-dim: rgba(255, 255, 255, 0.5);
+    --fp-success: #22c55e;
+    --fp-error: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--fp-dark);
+    color: var(--fp-text);
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.hidden { display: none !important; }
+
+/* ── Permission Gate ── */
+.gate {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 30%, rgba(255,107,53,0.08) 0%, var(--fp-dark) 70%);
+    z-index: 100;
+    padding: 24px;
+}
+
+.gate-content {
+    text-align: center;
+    max-width: 380px;
+}
+
+.gate-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.gate h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--fp-orange), #ff9f6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gate-scene-name {
+    font-size: 16px;
+    color: var(--fp-text-dim);
+    margin-bottom: 24px;
+}
+
+.gate-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--fp-text-dim);
+    margin-bottom: 28px;
+}
+
+.gate-tips {
+    text-align: left;
+    margin-bottom: 32px;
+}
+
+.tip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    background: var(--fp-card);
+    border: 1px solid var(--fp-border);
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+.tip-icon { font-size: 18px; }
+
+.btn-primary {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--fp-orange), #e85d2a);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px var(--fp-orange-glow);
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+.btn-secondary {
+    padding: 14px 28px;
+    background: var(--fp-card);
+    color: var(--fp-text);
+    border: 1px solid var(--fp-border);
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gate-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--fp-text-dim);
+}
+
+/* ── Camera View ── */
+#capture-view {
+    position: fixed;
+    inset: 0;
+    background: black;
+}
+
+#camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+#overlay > * { pointer-events: auto; }
+
+/* ── Top Bar ── */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    padding-top: max(16px, env(safe-area-inset-top));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+}
+
+.ring-indicator {
+    display: flex;
+    flex-direction: column;
+}
+
+#ring-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fp-orange);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#ring-name {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.frame-counter {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.frame-total {
+    font-size: 14px;
+    color: var(--fp-text-dim);
+}
+
+/* ── Compass ── */
+#compass-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.compass {
+    width: min(260px, 65vw);
+    height: min(260px, 65vw);
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+}
+
+.target-dot {
+    transition: fill 0.3s, r 0.3s;
+}
+
+.target-dot.captured {
+    fill: var(--fp-success) !important;
+    r: 8;
+}
+
+.target-dot.active {
+    fill: var(--fp-orange) !important;
+    r: 14;
+    animation: pulse-dot 1s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.align-text {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fp-text-dim);
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.align-text.aligned {
+    color: var(--fp-success);
+}
+
+/* ── Ring Progress ── */
+.ring-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 12px 20px;
+}
+
+.ring-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ring-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.3s;
+}
+
+.ring-step.done .ring-dot {
+    background: var(--fp-success);
+    border-color: var(--fp-success);
+    box-shadow: 0 0 12px rgba(34,197,94,0.4);
+}
+
+.ring-step.active .ring-dot {
+    background: var(--fp-orange);
+    border-color: var(--fp-orange);
+    box-shadow: 0 0 12px var(--fp-orange-glow);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.ring-step span {
+    font-size: 10px;
+    color: var(--fp-text-dim);
+    font-weight: 500;
+}
+
+.ring-step.active span { color: var(--fp-orange); }
+.ring-step.done span { color: var(--fp-success); }
+
+.ring-connector {
+    width: 40px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    margin: 0 8px;
+    margin-bottom: 18px;
+}
+
+/* ── Photo Strip ── */
+.photo-strip {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.photo-strip::-webkit-scrollbar { display: none; }
+
+.strip-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    animation: thumbIn 0.3s ease;
+}
+
+@keyframes thumbIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* ── Bottom Controls ── */
+.bottom-controls {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+.capture-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.capture-btn:active { transform: scale(0.9); }
+
+.capture-btn-ring {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 3px solid white;
+}
+
+/* ── Flash Effect ── */
+.flash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 50;
+    transition: opacity 0.15s;
+}
+
+.flash.active {
+    opacity: 0.6;
+}
+
+/* ── Review Screen ── */
+#review-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fp-dark);
+    z-index: 60;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.review-content {
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+}
+
+.review-content h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.review-subtitle {
+    color: var(--fp-orange);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 16px;
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+.review-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.review-info {
+    font-size: 14px;
+    color: var(--fp-text-dim);
+    margin-bottom: 24px;
+}
+
+.review-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.review-actions .btn-primary,
+.review-actions .btn-secondary {
+    flex: 1;
+}
+
+/* ── Upload Overlay ── */
+#upload-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 15, 0.95);
+    z-index: 70;
+}
+
+.upload-content {
+    text-align: center;
+}
+
+.upload-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--fp-orange);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.upload-content h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+#upload-progress-text {
+    color: var(--fp-text-dim);
+    margin-bottom: 16px;
+}
+
+.upload-bar-container {
+    width: 260px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.upload-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fp-orange), #ff9f6b);
+    border-radius: 3px;
+    transition: width 0.3s;
+}
