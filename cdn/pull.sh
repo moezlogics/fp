@@ -7,7 +7,7 @@ if [ ! -d ".deploy-source" ]; then
 fi
 
 cd .deploy-source
-git pull origin main
+git pull origin master
 cd ..
 
 echo "=== Syncing files to Root ==="
