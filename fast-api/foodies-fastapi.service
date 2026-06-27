@@ -1,0 +1,15 @@
+[Unit]
+Description=Foodies Pakistan FastAPI Microservice
+After=network.target
+
+[Service]
+User=foodiespakistan-fastapi
+Group=foodiespakistan-fastapi
+WorkingDirectory=/home/foodiespakistan-fastapi/htdocs/fastapi.foodiespakistan.pk
+Environment="PATH=/home/foodiespakistan-fastapi/htdocs/fastapi.foodiespakistan.pk/venv/bin"
+ExecStart=/home/foodiespakistan-fastapi/htdocs/fastapi.foodiespakistan.pk/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8500 --workers 1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
