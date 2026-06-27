@@ -21,12 +21,4 @@ rsync -av --delete \
   --exclude='logs/' \
   .deploy-source/api/ .
 
-echo "=== Running Deploy Actions ==="
-if [ -f "ecosystem.config.js" ]; then
-  echo "PM2 config found. Restarting API..."
-  pm2 reload ecosystem.config.js || pm2 restart ecosystem.config.js
-else
-  echo "No ecosystem.config.js found. Please restart manually."
-fi
-
-echo "=== API Updated Successfully ==="
+echo "=== API Updated Successfully (Build/Restart manually) ==="

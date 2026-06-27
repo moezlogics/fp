@@ -21,14 +21,4 @@ rsync -av --delete \
   --exclude='out/' \
   .deploy-source/frontend/ .
 
-echo "=== Running Deploy Actions ==="
-if [ -f "package.json" ]; then
-  echo "Installing dependencies & building Next.js project..."
-  npm install --legacy-peer-deps
-  npm run build
-  # If PM2 is used, restart here. Example: pm2 reload frontend
-else
-  echo "No package.json found. Please build manually."
-fi
-
-echo "=== Frontend Updated Successfully ==="
+echo "=== Frontend Updated Successfully (Build/Restart manually) ==="

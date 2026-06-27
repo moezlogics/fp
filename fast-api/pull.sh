@@ -20,12 +20,4 @@ rsync -av --delete \
   --exclude='__pycache__/' \
   .deploy-source/fast-api/ .
 
-echo "=== Running Deploy Actions ==="
-if systemctl is-active --quiet foodies-fastapi; then
-  echo "Restarting foodies-fastapi systemd service..."
-  sudo systemctl restart foodies-fastapi
-else
-  echo "foodies-fastapi service is not running or sudo is required. Please check service manually."
-fi
-
-echo "=== FastAPI Updated Successfully ==="
+echo "=== FastAPI Updated Successfully (Restart service manually) ==="
