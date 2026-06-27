@@ -16,11 +16,13 @@ import { blurDataUrl } from "@/lib/blur-data-url";
 interface GalleryImage {
     url: string;
     category: "Food" | "Interior" | "Vibes" | "Location";
+    altText?: string;
 }
 
 interface RestaurantGalleryProps {
     restaurantId: string;
     coverImage: string;
+    coverImageAlt?: string;
     galleryImages: (string | GalleryImage)[];
     restaurantName: string;
     restaurantSlug: string;
@@ -44,16 +46,18 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 /* ─────────── Component ─────────── */
 export function RestaurantGallery({
-    restaurantId, coverImage, galleryImages, restaurantName, restaurantSlug, videoUrl, discountLabel, isPrimePartner, isVerifiedPartner, isFeatured,
+    restaurantId, coverImage, coverImageAlt, galleryImages, restaurantName, restaurantSlug, videoUrl, discountLabel, isPrimePartner, isVerifiedPartner, isFeatured,
 }: RestaurantGalleryProps) {
     const { data: session } = useSession();
     const { openAuthModal } = useAuthModal();
 
     /* ── Normalization (Media + Categories) ── */
     const normalizedImages: GalleryImage[] = [
-        { url: coverImage, category: "Interior" as const },
+        { url: coverImage, category: "Interior" as const, altText: coverImageAlt || `${restaurantName} - Main Entrance` },
         ...galleryImages.map(img => 
-            typeof img === "string" ? { url: img, category: "Food" as const } : img
+            typeof img === "string" 
+                ? { url: img, category: "Food" as const, altText: `${restaurantName} Food` } 
+                : { url: img.url, category: img.category, altText: img.altText || `${restaurantName} ${img.category || 'Interior'}` }
         )
     ].filter(i => i.url);
 
@@ -64,7 +68,7 @@ export function RestaurantGallery({
         ? normalizedImages 
         : normalizedImages.filter(img => img.category === activeCategory);
 
-    const slides = filteredMedia.map(img => ({ src: img.url }));
+    const slides = filteredMedia.map(img => ({ src: img.url, alt: img.altText }));
 
     /* ── Save / Heart ── */
     const [saved, setSaved] = useState(false);
@@ -146,7 +150,7 @@ export function RestaurantGallery({
                     setActiveCategory(cat); 
                     setLbIndex(0); // It's the first image in any filtered list because it's first in normalized
                 }}>
-                <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={`${restaurantName} - Main Entrance`} fill
+                <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName} - Main Entrance`} fill
                     className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 66vw, 50vw" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
             </div>
@@ -165,7 +169,7 @@ export function RestaurantGallery({
                             const idx = filtered.findIndex(img => img.url === normalizedImages[i].url);
                             setLbIndex(idx >= 0 ? idx : 0);
                         }}>
-                        <Image src={img.url} alt={`${restaurantName} Interior`} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={80} />
+                        <Image src={img.url} alt={img.altText || `${restaurantName} Interior`} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={80} />
                         
                         {isLast && normalizedImages.length > 5 && (
                             <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-4 backdrop-blur-[3px] transition-all group-hover:bg-black/60">
@@ -206,7 +210,7 @@ export function RestaurantGallery({
                     setActiveCategory(cat); 
                     setLbIndex(0);
                 }}>
-                <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={`${restaurantName}`} fill
+                <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName}`} fill
                     className="object-cover" sizes="(max-width: 768px) 66vw, 50vw" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </div>
@@ -221,7 +225,7 @@ export function RestaurantGallery({
                         const idx = filtered.findIndex(img => img.url === normalizedImages[1].url);
                         setLbIndex(idx >= 0 ? idx : 0);
                     }}>
-                    <Image src={normalizedImages[1].url} alt={`${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
+                    <Image src={normalizedImages[1].url} alt={normalizedImages[1].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
                 </div>
             ) : <div className="bg-gray-50 flex items-center justify-center"><ImageIcon className="w-4 h-4 text-gray-200" /></div>}
 
@@ -235,7 +239,7 @@ export function RestaurantGallery({
                         const idx = filtered.findIndex(img => img.url === normalizedImages[2].url);
                         setLbIndex(idx >= 0 ? idx : 0);
                     }}>
-                    <Image src={normalizedImages[2].url} alt={`${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
+                    <Image src={normalizedImages[2].url} alt={normalizedImages[2].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
                     
                     {normalizedImages.length > 3 && (
                         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center backdrop-blur-[2px]">
@@ -346,7 +350,7 @@ export function RestaurantGallery({
                         <div className="relative w-full h-full flex items-center justify-center p-6 pb-24 md:pb-36">
                             <img 
                                 src={slide.src} 
-                                alt="" 
+                                alt={slide.alt || ""} 
                                 className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl transition-all"
                             />
                         </div>

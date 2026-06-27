@@ -41,12 +41,51 @@ export default function ImageGalleryModal({
     const [libSearchTerm, setLibSearchTerm] = useState("");
     const [gridScale, setGridScale] = useState<"standard" | "compact">("standard");
 
+    const [loadingLibrary, setLoadingLibrary] = useState(false);
+
     // Update library when existingMedia prop changes
     useEffect(() => {
         if (existingMedia.length > 0) {
             setLibrary(existingMedia);
         }
     }, [existingMedia]);
+
+    // Fetch all files from /api/media to populate the library tab (WordPress-like library behaviour)
+    useEffect(() => {
+        if (tab === "library" && isOpen) {
+            const fetchGlobalMedia = async () => {
+                setLoadingLibrary(true);
+                try {
+                    const res = await fetch("/api/media?limit=100");
+                    const json = await res.json();
+                    if (json.success && json.data) {
+                        const items = json.data.items || json.data.files || [];
+                        const mappedItems: MediaItem[] = items.map((m: any) => ({
+                            url: m.url,
+                            thumbUrl: m.thumbUrl || undefined,
+                            type: m.type || "image",
+                            filename: m.filename,
+                        }));
+                        
+                        // Merge with existingMedia ensuring no duplicates by URL
+                        const merged = [...existingMedia];
+                        const urls = new Set(merged.map(x => x.url));
+                        mappedItems.forEach((m: any) => {
+                            if (!urls.has(m.url)) {
+                                merged.push(m);
+                            }
+                        });
+                        setLibrary(merged);
+                    }
+                } catch (e) {
+                    console.error("Failed to load global media library:", e);
+                } finally {
+                    setLoadingLibrary(false);
+                }
+            };
+            fetchGlobalMedia();
+        }
+    }, [tab, isOpen, existingMedia]);
 
     // ── Upload handler (useCallback to satisfy hooks order) ──
     const handleUpload = useCallback(async (files: FileList | null) => {
@@ -296,79 +335,88 @@ export default function ImageGalleryModal({
                     {/* ═══ Library Tab ═══ */}
                     {tab === "library" && (
                         <div className="space-y-6">
-                            {/* Images */}
-                            {images.length > 0 && (
-                                <div>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-1">
-                                        <ImageIcon className="w-3.5 h-3.5" /> Images ({images.length})
-                                    </h3>
-                                    <div className={`grid gap-3 ${
-                                        gridScale === "compact" 
-                                            ? "grid-cols-4 md:grid-cols-6 lg:grid-cols-8" 
-                                            : "grid-cols-2 md:grid-cols-4"
-                                    }`}>
-                                        {images.map(m => (
-                                            <div key={m.url} className="relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all bg-gray-50"
-                                                style={{ borderColor: selected.has(m.url) ? "#e8323b" : "transparent" }}
-                                                onClick={() => toggleSelect(m.url)}>
-                                                <img src={m.url} alt="" className="w-full aspect-square object-contain" />
-                                                {selected.has(m.url) && (
-                                                    <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow">
-                                                        <Check className="w-3 h-3 text-white" />
-                                                    </div>
-                                                )}
-                                                <button className="absolute top-2 left-2 w-6 h-6 bg-red-500/80 rounded-full items-center justify-center text-white opacity-0 group-hover:opacity-100 transition hidden md:flex"
-                                                    onClick={e => { e.stopPropagation(); handleDelete(m.url); }}>
-                                                    <Trash2 className="w-3 h-3" />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
+                            {loadingLibrary ? (
+                                <div className="flex flex-col items-center justify-center py-20 gap-3">
+                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    <p className="text-xs text-gray-400 font-bold">Loading media library...</p>
                                 </div>
-                            )}
-
-                            {/* Videos */}
-                            {videos.length > 0 && (
-                                <div>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-1">
-                                        <Film className="w-3.5 h-3.5" /> Videos ({videos.length})
-                                    </h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {videos.map(m => (
-                                            <div key={m.url} className="relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all"
-                                                style={{ borderColor: selected.has(m.url) ? "#e8323b" : "transparent" }}
-                                                onClick={() => toggleSelect(m.url)}>
-                                                {m.type === "youtube" && m.thumbUrl ? (
-                                                    <div className="relative aspect-video bg-black">
-                                                        <img src={m.thumbUrl} alt="" className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 flex items-center justify-center">
-                                                            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-xl">
-                                                                <Youtube className="w-5 h-5 text-white" />
+                            ) : (
+                                <>
+                                    {/* Images */}
+                                    {images.length > 0 && (
+                                        <div>
+                                            <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-1">
+                                                <ImageIcon className="w-3.5 h-3.5" /> Images ({images.length})
+                                            </h3>
+                                            <div className={`grid gap-3 ${
+                                                gridScale === "compact" 
+                                                    ? "grid-cols-4 md:grid-cols-6 lg:grid-cols-8" 
+                                                    : "grid-cols-2 md:grid-cols-4"
+                                            }`}>
+                                                {images.map(m => (
+                                                    <div key={m.url} className="relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all bg-gray-50"
+                                                        style={{ borderColor: selected.has(m.url) ? "#e8323b" : "transparent" }}
+                                                        onClick={() => toggleSelect(m.url)}>
+                                                        <img src={m.url} alt="" className="w-full aspect-square object-contain" />
+                                                        {selected.has(m.url) && (
+                                                            <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow">
+                                                                <Check className="w-3 h-3 text-white" />
                                                             </div>
-                                                        </div>
+                                                        )}
+                                                        <button className="absolute top-2 left-2 w-6 h-6 bg-red-500/80 rounded-full items-center justify-center text-white opacity-0 group-hover:opacity-100 transition hidden md:flex"
+                                                            onClick={e => { e.stopPropagation(); handleDelete(m.url); }}>
+                                                            <Trash2 className="w-3 h-3" />
+                                                        </button>
                                                     </div>
-                                                ) : (
-                                                    <div className="aspect-video bg-gray-900 flex items-center justify-center">
-                                                        <Film className="w-8 h-8 text-gray-400" />
-                                                    </div>
-                                                )}
-                                                {selected.has(m.url) && (
-                                                    <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow">
-                                                        <Check className="w-3 h-3 text-white" />
-                                                    </div>
-                                                )}
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                        </div>
+                                    )}
 
-                            {library.length === 0 && (
-                                <div className="text-center py-16 space-y-3">
-                                    <ImageIcon className="w-12 h-12 text-gray-300 mx-auto" />
-                                    <p className="text-sm text-gray-500 font-bold">No media yet</p>
-                                    <p className="text-xs text-gray-400">Upload images or add YouTube videos to get started.</p>
-                                </div>
+                                    {/* Videos */}
+                                    {videos.length > 0 && (
+                                        <div>
+                                            <h3 className="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-1">
+                                                <Film className="w-3.5 h-3.5" /> Videos ({videos.length})
+                                            </h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                {videos.map(m => (
+                                                    <div key={m.url} className="relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all"
+                                                        style={{ borderColor: selected.has(m.url) ? "#e8323b" : "transparent" }}
+                                                        onClick={() => toggleSelect(m.url)}>
+                                                        {m.type === "youtube" && m.thumbUrl ? (
+                                                            <div className="relative aspect-video bg-black">
+                                                                <img src={m.thumbUrl} alt="" className="w-full h-full object-cover" />
+                                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-xl">
+                                                                        <Youtube className="w-5 h-5 text-white" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="aspect-video bg-gray-900 flex items-center justify-center">
+                                                                <Film className="w-8 h-8 text-gray-400" />
+                                                            </div>
+                                                        )}
+                                                        {selected.has(m.url) && (
+                                                            <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow">
+                                                                <Check className="w-3 h-3 text-white" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {library.length === 0 && (
+                                        <div className="text-center py-16 space-y-3">
+                                            <ImageIcon className="w-12 h-12 text-gray-300 mx-auto" />
+                                            <p className="text-sm text-gray-500 font-bold">No media yet</p>
+                                            <p className="text-xs text-gray-400">Upload images or add YouTube videos to get started.</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}

@@ -318,6 +318,7 @@ export default function RestaurantDetailView({
             restaurantSlug={slug}
             restaurantName={r.name}
             coverImage={r.coverImage}
+            coverImageAlt={r.coverImageAlt}
             galleryImages={r.galleryImages || []}
             videoUrl={r.videoUrl}
             discountLabel={r.discountLabel}

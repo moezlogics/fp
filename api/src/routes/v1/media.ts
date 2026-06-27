@@ -13,6 +13,9 @@ import { Router, Request, Response } from "express";
 import Media from "../../models/Media";
 import { cdnClient } from "../../services/cdn-client";
 import { generateAltText, processMediaUpload } from "../../services/ai-alt-service";
+import { env } from "../../config/env";
+import axios from "axios";
+import mongoose from "mongoose";
 
 const router = Router();
 
@@ -54,31 +57,134 @@ router.get("/", async (req: Request, res: Response) => {
         const search = (req.query.search as string || "").trim();
         const type = req.query.type as string;
 
-        const filter: any = {};
-        if (search) {
-            filter.$text = { $search: search };
-        }
-        if (type && ["image", "video"].includes(type)) {
-            filter.type = type;
+        // 1. Fetch files from CDN first (WordPress-like library behaviour)
+        const cdnUrl = env.CDN_BASE_URL || "https://cdn.foodiespakistan.pk";
+        const cdnKey = env.CDN_API_KEY || "fpk-cdn-secret-key-change-in-production";
+
+        let files: any[] = [];
+        let total = 0;
+        let hasMore = false;
+
+        try {
+            const queryParams = new URLSearchParams({ page: String(page), limit: String(limit) });
+            const cdnRes = await axios.get(`${cdnUrl}/api/media/list?${queryParams}`, {
+                headers: { "x-cdn-key": cdnKey }
+            });
+            if (cdnRes.data && cdnRes.data.success) {
+                files = cdnRes.data.data.files || [];
+                total = cdnRes.data.data.total || 0;
+                hasMore = cdnRes.data.data.hasMore || false;
+            }
+        } catch (err: any) {
+            console.error("[Media API] Failed to fetch list from CDN:", err.message);
         }
 
-        const [items, total] = await Promise.all([
-            Media.find(filter)
-                .sort({ createdAt: -1 })
-                .skip((page - 1) * limit)
-                .limit(limit)
-                .lean(),
-            Media.countDocuments(filter),
-        ]);
+        if (files.length === 0) {
+            // Fallback to database query if CDN is unreachable or empty
+            const filter: any = {};
+            if (search) filter.$text = { $search: search };
+            if (type && ["image", "video"].includes(type)) filter.type = type;
 
+            const [dbItems, dbTotal] = await Promise.all([
+                Media.find(filter)
+                    .sort({ createdAt: -1 })
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .lean(),
+                Media.countDocuments(filter),
+            ]);
+
+            res.json({
+                success: true,
+                data: {
+                    items: dbItems,
+                    total: dbTotal,
+                    page,
+                    limit,
+                    hasMore: page * limit < dbTotal,
+                },
+            });
+            return;
+        }
+
+        // 2. Query MongoDB for existing media details for these URLs
+        const urls = files.map(f => f.url);
+        const dbMedia = await Media.find({ url: { $in: urls } }).lean();
+        const dbMediaMap = new Map<string, any>();
+        dbMedia.forEach(m => dbMediaMap.set(m.url, m));
+
+        // 3. For any files not present in MongoDB, register them in background (Auto-Sync!)
+        const missingMedia: any[] = [];
+        const enrichedItems = files.map(file => {
+            const dbItem = dbMediaMap.get(file.url);
+            if (dbItem) {
+                return {
+                    ...file,
+                    _id: dbItem._id,
+                    altText: dbItem.altText || "",
+                    altTextStatus: dbItem.altTextStatus || "pending",
+                };
+            } else {
+                // Prepare to auto-register
+                const newDoc = {
+                    url: file.url,
+                    thumbUrl: file.thumbUrl || null,
+                    filename: file.filename,
+                    originalFilename: file.filename,
+                    type: file.type || "image",
+                    format: file.filename.split(".").pop() || "webp",
+                    width: null,
+                    height: null,
+                    sizeBytes: file.sizeBytes || null,
+                    altTextStatus: "pending", // let AI alt service generate in background
+                    altText: "",
+                    createdAt: new Date(file.createdAt || Date.now()),
+                    updatedAt: new Date(),
+                };
+                missingMedia.push(newDoc);
+                return {
+                    ...file,
+                    _id: new mongoose.Types.ObjectId().toString(), // temp ID for UI key
+                    altText: "",
+                    altTextStatus: "pending",
+                };
+            }
+        });
+
+        if (missingMedia.length > 0) {
+            // Auto-register asynchronously (fire-and-forget)
+            Media.insertMany(missingMedia)
+                .then(async (docs) => {
+                    console.log(`[Media API] Auto-registered ${docs.length} missing files from CDN.`);
+                    // Trigger AI Alt Text generation for each newly registered image
+                    for (const doc of docs) {
+                        if (doc.type === "image") {
+                            generateAltText(doc.url)
+                                .then(async (altText: string) => {
+                                    await Media.updateOne({ _id: doc._id }, { $set: { altText, altTextStatus: "generated" } });
+                                    console.log(`[AI ALT] ✅ Auto-generated for ${doc.filename}: "${altText}"`);
+                                })
+                                .catch((e: any) => {
+                                    console.error(`[AI ALT] ❌ Auto-failed for ${doc.filename}:`, e.message);
+                                    Media.updateOne({ _id: doc._id }, { $set: { altTextStatus: "failed" } }).exec();
+                                });
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("[Media API] Auto-register failed:", err.message);
+                });
+        }
+
+        // 4. Return enriched items matching the frontend structure
         res.json({
             success: true,
             data: {
-                items,
+                items: enrichedItems,
                 total,
                 page,
                 limit,
-                hasMore: page * limit < total,
+                hasMore,
             },
         });
     } catch (err: any) {

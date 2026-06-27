@@ -11,6 +11,7 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { Restaurant } from "../../models/Restaurant";
+import Media from "../../models/Media";
 
 import { YieldRule } from "../../models/YieldRule";
 import { Deal } from "../../models/Deal";
@@ -462,6 +463,34 @@ router.get("/:slug", async (req: Request, res: Response) => {
             }).lean() as any;
 
             if (!restaurant) return null;
+
+            // Retrieve altText for coverImage and galleryImages from Media collection
+            const imageUrls = [
+                restaurant.coverImage,
+                ...(restaurant.galleryImages || []).map((img: any) => typeof img === "string" ? img : img.url)
+            ].filter(Boolean);
+
+            const mediaDocs = await Media.find({ url: { $in: imageUrls } })
+                .select("url altText")
+                .lean();
+
+            const altTextMap = new Map<string, string>();
+            for (const doc of mediaDocs) {
+                if (doc.altText) {
+                    altTextMap.set(doc.url, doc.altText);
+                }
+            }
+
+            // Enrich restaurant with altTexts
+            restaurant.coverImageAlt = altTextMap.get(restaurant.coverImage) || "";
+            restaurant.galleryImages = (restaurant.galleryImages || []).map((img: any) => {
+                const imgUrl = typeof img === "string" ? img : img.url;
+                return {
+                    url: imgUrl,
+                    category: img.category || "Food",
+                    altText: altTextMap.get(imgUrl) || "",
+                };
+            });
 
             // Fetch related metadata
             const [reviews, deals, otherBranches, similarRestaurants, yieldRules, vouchers] = await Promise.all([
