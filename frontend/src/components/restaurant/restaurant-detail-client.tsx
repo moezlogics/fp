@@ -1044,7 +1044,10 @@ function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranche
                     <h2 className="font-bold text-xs uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-1.5">
                         <Info className="w-3.5 h-3.5 text-primary" /> About {r.brandName || r.name}
                     </h2>
-                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} className="prose prose-sm max-w-full text-[13px] md:text-sm text-gray-600 leading-relaxed overflow-hidden whitespace-pre-wrap [&_p]:mb-2 [&_p]:last:mb-0 [&_img]:max-w-full [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto" />
+                    <div 
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} 
+                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-gray-600 leading-relaxed prose-headings:text-gray-900 prose-headings:font-bold prose-a:text-primary hover:prose-a:underline [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" 
+                    />
                 </div>
             )}
 
