@@ -301,27 +301,49 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                             </div>
 
                             {/* City + Auth */}
-                            <div className="flex items-center gap-2 shrink-0">
+                            <div className="flex items-center gap-2.5 shrink-0">
                                 {/* City Selector */}
                                 <div ref={desktopCityRef} className="relative">
                                     <button onClick={() => setCityOpen(!cityOpen)}
-                                        className="flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 rounded-full px-3 py-2 border border-gray-200/80 transition-all text-sm group">
-                                        <MapPin className="w-3.5 h-3.5 text-primary group-hover:scale-110 transition-transform" />
-                                        <span className="font-bold text-gray-900 max-w-[80px] truncate">{activeCity}</span>
-                                        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-300 ${cityOpen ? "rotate-180" : ""}`} />
+                                        className="flex items-center gap-2 bg-white hover:bg-zinc-50 rounded-full px-4 py-2.5 border border-zinc-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all text-sm font-bold text-zinc-800 active:scale-[0.97] group">
+                                        <MapPin className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                        <span className="font-extrabold text-zinc-950 max-w-[100px] truncate">{activeCity}</span>
+                                        <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-300 ${cityOpen ? "rotate-180" : ""}`} />
                                     </button>
                                     {cityOpen && (
-                                        <div className="absolute top-full mt-2 right-0 w-64 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                                            <div className="p-3 border-b sticky top-0 bg-white rounded-t-2xl">
-                                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Select City</p>
+                                        <div className="absolute top-full mt-2.5 right-0 w-80 bg-white border border-zinc-100 rounded-2xl shadow-xl z-50 p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div className="flex items-center justify-between pb-3 border-b border-zinc-50 mb-3">
+                                                <div>
+                                                    <p className="text-xs font-black text-zinc-900">Choose Location</p>
+                                                    <p className="text-[10px] text-zinc-400 font-semibold mt-0.5">Select city to view nearby partners</p>
+                                                </div>
+                                                <button 
+                                                    onClick={() => setCityOpen(false)}
+                                                    className="text-zinc-400 hover:text-zinc-800 transition-colors"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
                                             </div>
-                                            <div className="p-2 grid grid-cols-2 gap-1">
-                                                {cities.map(c => (
-                                                    <button key={c._id || c.slug} onClick={() => selectCity(c)}
-                                                        className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition ${c.slug === activeCitySlug ? "bg-primary/10 text-primary font-bold" : "hover:bg-gray-50 text-gray-700"}`}>
-                                                        {c.name}
-                                                    </button>
-                                                ))}
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {cities.map(c => {
+                                                    const isActive = c.slug === activeCitySlug;
+                                                    return (
+                                                        <button 
+                                                            key={c._id || c.slug} 
+                                                            onClick={() => selectCity(c)}
+                                                            className={`flex flex-col p-3 rounded-xl text-left border transition-all active:scale-[0.98] ${
+                                                                isActive 
+                                                                    ? "bg-primary/5 border-primary text-primary font-black shadow-xs shadow-primary/5" 
+                                                                    : "bg-zinc-50 hover:bg-zinc-100 border-zinc-100 text-zinc-700 font-bold"
+                                                            }`}
+                                                        >
+                                                            <span className="text-xs">{c.name}</span>
+                                                            <span className="text-[8px] text-zinc-400 font-semibold uppercase tracking-wider mt-0.5">
+                                                                {c.slug === "lahore" ? "Punjab" : c.slug === "multan" ? "Punjab" : c.slug === "karachi" ? "Sindh" : c.slug === "islamabad" ? "Capital" : "Pakistan"}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -359,26 +381,11 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                             {/* Left: City Selector */}
                             <div ref={mobileCityRef} className="relative shrink-0">
                                 <button onClick={() => setCityOpen(!cityOpen)}
-                                    className="flex items-center gap-1 bg-gray-50 rounded-full pl-2 pr-2.5 py-1.5 border border-gray-100 text-xs">
-                                    <MapPin className="w-3 h-3 text-primary" />
-                                    <span className="font-bold text-gray-900 max-w-[35px] truncate">{activeCity}</span>
-                                    <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform ${cityOpen ? "rotate-180" : ""}`} />
+                                    className="flex items-center gap-1.5 bg-white rounded-full pl-3 pr-3.5 py-2 border border-zinc-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-xs font-bold text-zinc-800 active:scale-[0.97] transition-all">
+                                    <MapPin className="w-3.5 h-3.5 text-primary" />
+                                    <span className="font-extrabold text-zinc-950 max-w-[80px] truncate">{activeCity}</span>
+                                    <ChevronDown className={`w-3 h-3 text-zinc-400 transition-transform ${cityOpen ? "rotate-180" : ""}`} />
                                 </button>
-                                {cityOpen && (
-                                    <div className="absolute top-full mt-2 left-0 w-64 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                                        <div className="p-3 border-b sticky top-0 bg-white rounded-t-2xl">
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Select City</p>
-                                        </div>
-                                        <div className="p-2 grid grid-cols-2 gap-1">
-                                            {cities.map(c => (
-                                                <button key={c._id || c.slug} onClick={() => selectCity(c)}
-                                                    className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition ${c.slug === activeCitySlug ? "bg-primary/10 text-primary font-bold" : "hover:bg-gray-50 text-gray-700"}`}>
-                                                    {c.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Center: Logo */}
@@ -483,6 +490,57 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                     )}
                 </div>
             </nav>
+
+            {/* Mobile City Selector Bottom Sheet Overlay */}
+            {cityOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div 
+                        className="fixed inset-0 bg-black/50 backdrop-blur-xs z-[999] transition-opacity duration-300 md:hidden animate-in fade-in"
+                        onClick={() => setCityOpen(false)}
+                    />
+                    {/* Bottom Sheet */}
+                    <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] shadow-2xl z-[1000] p-6 md:hidden animate-in slide-in-from-bottom duration-300 max-h-[85vh] overflow-y-auto">
+                        {/* Drag Handle */}
+                        <div className="w-12 h-1 bg-zinc-200 rounded-full mx-auto mb-5" />
+                        
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="text-base font-extrabold text-zinc-900">Select City</h3>
+                                <p className="text-xs text-zinc-400 mt-0.5 font-semibold">Choose your location to see restaurants</p>
+                            </div>
+                            <button 
+                                onClick={() => setCityOpen(false)} 
+                                className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:text-zinc-800 active:scale-90 transition-transform"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2.5 mt-2">
+                            {cities.map(c => {
+                                const isActive = c.slug === activeCitySlug;
+                                return (
+                                    <button 
+                                        key={c._id || c.slug} 
+                                        onClick={() => selectCity(c)}
+                                        className={`flex flex-col p-4 rounded-2xl text-left border transition-all active:scale-[0.98] ${
+                                            isActive 
+                                                ? "bg-primary/5 border-primary text-primary font-black shadow-xs shadow-primary/5" 
+                                                : "bg-zinc-50 hover:bg-zinc-100 border-zinc-150 text-zinc-700 font-bold"
+                                        }`}
+                                    >
+                                        <span className="text-sm">{c.name}</span>
+                                        <span className="text-[9px] text-zinc-400 font-semibold uppercase tracking-wider mt-0.5">
+                                            {c.slug === "lahore" ? "Punjab" : c.slug === "multan" ? "Punjab" : c.slug === "karachi" ? "Sindh" : c.slug === "islamabad" ? "Capital" : "Pakistan"}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </>
+            )}
         </>
     );
 }
