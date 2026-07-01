@@ -1046,7 +1046,7 @@ function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranche
                     </h2>
                     <div 
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} 
-                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-gray-600 leading-relaxed prose-headings:text-gray-900 prose-headings:font-bold prose-a:text-primary hover:prose-a:underline [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:!w-auto [&_div]:!w-auto [&_span]:!w-auto [&_p]:!mx-0 [&_div]:!mx-0 [&_h1]:!mx-0 [&_h2]:!mx-0 [&_h3]:!mx-0 [&_h4]:!mx-0 [&_h5]:!mx-0 [&_h6]:!mx-0 [&_p]:!whitespace-normal [&_div]:!whitespace-normal [&_span]:!whitespace-normal [&_*]:max-w-full [&_*]:break-words" 
+                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-gray-600 leading-relaxed prose-headings:text-gray-900 prose-headings:font-bold prose-a:text-primary hover:prose-a:underline [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:!w-auto [&_div]:!w-auto [&_span]:!w-auto [&_p]:!mx-0 [&_div]:!mx-0 [&_h1]:!mx-0 [&_h2]:!mx-0 [&_h3]:!mx-0 [&_h4]:!mx-0 [&_h5]:!mx-0 [&_h6]:!mx-0 [&_p]:!whitespace-normal [&_div]:!whitespace-normal [&_span]:!whitespace-normal [&_*]:max-w-full [&_*]:[!word-break:normal] [&_*]:[!overflow-wrap:break-word]" 
                     />
                 </div>
             )}
