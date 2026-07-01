@@ -395,9 +395,12 @@
 .description-text,
 .description-text * {
   box-sizing: border-box !important;
-  word-break: keep-all !important;
+  word-break: normal !important;
   overflow-wrap: break-word !important;
   word-wrap: break-word !important;
   white-space: normal !important;
+  -webkit-hyphens: none !important;
+  -moz-hyphens: none !important;
+  -ms-hyphens: none !important;
   hyphens: none !important;
 }

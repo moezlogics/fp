@@ -346,7 +346,7 @@ export default function RestaurantDetailView({
 
                 <div className="flex-1 min-w-0 pb-1 md:pb-2 pt-0.5 md:pt-0 mt-0 md:-mt-6">
                   <div className="block md:flex md:flex-col">
-                    <h1 className="text-2xl md:text-4xl font-extrabold leading-tight text-black tracking-tight inline md:block">
+                    <h1 className="text-2xl md:text-4xl font-extrabold leading-[1.1] md:leading-tight text-black tracking-tight inline md:block">
                       <span>{r.brandName}{r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : ""}</span>
                       {(r.isVerifiedPartner || r.isFeatured) && (
                         <span className="inline-flex items-center shrink-0 align-middle ml-1.5">
@@ -361,7 +361,7 @@ export default function RestaurantDetailView({
                       const fullName = r.brandName + (r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : "");
                       const isLongName = fullName.length >= 18;
                       return (
-                        <div className={`${isLongName ? "inline" : "flex w-full"} md:flex items-center gap-2 md:gap-3 flex-wrap md:mt-0.5 ${isLongName ? "ml-2" : "ml-0"} md:ml-0 align-middle`}>
+                        <div className={`${isLongName ? "inline" : "flex w-full -mt-1"} md:flex items-center gap-2 md:gap-3 flex-wrap md:mt-0.5 ${isLongName ? "ml-2" : "ml-0"} md:ml-0 align-middle`}>
                           {r.cuisines?.length > 0 && (
                             <div className="text-[10px] md:text-[11px] font-semibold text-zinc-500 uppercase tracking-wider inline-block align-middle">
                               <CuisinesLink cuisines={r.cuisines} />
