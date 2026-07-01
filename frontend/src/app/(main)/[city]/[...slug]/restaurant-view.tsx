@@ -362,6 +362,7 @@ export default function RestaurantDetailView({
                       const isLongName = fullName.length >= 18;
                       return (
                         <div className={`${isLongName ? "inline" : "flex w-full -mt-1"} md:flex items-center gap-2 md:gap-3 flex-wrap md:mt-0.5 ${isLongName ? "ml-2" : "ml-0"} md:ml-0 align-middle`}>
+                          <span className="text-zinc-400 font-normal inline md:hidden mx-1.5 align-middle">•</span>
                           {r.cuisines?.length > 0 && (
                             <div className="text-[10px] md:text-[11px] font-semibold text-zinc-500 uppercase tracking-wider inline-block align-middle">
                               <CuisinesLink cuisines={r.cuisines} />
@@ -387,7 +388,7 @@ export default function RestaurantDetailView({
               </div>
 
               {/* Info Block (Under the logo, aligned left) */}
-              <div className="flex flex-col gap-1 px-0.5 mt-1">
+              <div className="flex flex-col gap-0.5 md:gap-1 px-0.5 mt-0.5 md:mt-1">
                 {/* 1. Address Row */}
                 {(r.address || r.area) && (
                   <div className="flex">
@@ -468,7 +469,7 @@ export default function RestaurantDetailView({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 -mt-3 md:mt-0">
             <div className="lg:col-span-2 space-y-3 md:space-y-5 min-w-0 w-full overflow-hidden">
               <RestaurantTabs
                 restaurant={serializedRestaurant}
