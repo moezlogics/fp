@@ -42,12 +42,12 @@ export function BottomNav() {
 
     return (
         <nav className="btm-nav fixed bottom-0 left-0 right-0 z-50 sm:hidden">
-            {/* Glassmorphism background */}
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-2xl border-t border-gray-100/80" />
+            {/* Solid background */}
+            <div className="absolute inset-0 bg-white border-t border-gray-200 shadow-md" />
 
             {/* Active pill background — slides to the active item */}
             <div
-                className="absolute top-1.5 h-10 w-[52px] rounded-2xl bg-primary/10 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[1]"
+                className="absolute top-1.5 h-10 w-[52px] rounded-lg bg-primary/10 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-[1]"
                 style={{
                     left: `calc(${activeIndex >= 0 ? activeIndex : 2} * 20% + 10% - 26px)`,
                     opacity: activeIndex >= 0 ? 1 : 0,
@@ -71,7 +71,7 @@ export function BottomNav() {
                                 className={`transition-all duration-300 ease-out ${
                                     isActive
                                         ? "text-primary scale-110"
-                                        : "text-gray-400"
+                                        : "text-black"
                                 } ${isTapped ? "scale-125" : ""}`}
                                 style={{
                                     transform: `${isActive ? "scale(1.1)" : "scale(1)"} ${isTapped ? "scale(1.25) translateY(-2px)" : ""}`,
@@ -82,15 +82,15 @@ export function BottomNav() {
                                     className={`w-[20px] h-[20px] transition-all duration-300 ${
                                         isActive ? "drop-shadow-sm" : ""
                                     }`}
-                                    strokeWidth={isActive ? 2.5 : 1.8}
+                                    strokeWidth={isActive ? 2.8 : 2.2}
                                     fill={isActive && item.icon === Heart ? "currentColor" : "none"}
                                 />
                             </div>
 
                             {/* Label */}
                             <span
-                                className={`text-[9px] mt-[2px] font-semibold transition-all duration-300 ${
-                                    isActive ? "text-primary" : "text-gray-400"
+                                className={`text-[9px] mt-[2px] font-black uppercase tracking-wider transition-all duration-300 ${
+                                    isActive ? "text-primary" : "text-black"
                                 }`}
                             >
                                 {item.label}
@@ -98,7 +98,7 @@ export function BottomNav() {
 
                             {/* Active dot indicator */}
                             <div
-                                className={`absolute -bottom-0.5 w-1 h-1 rounded-full bg-primary transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                                className={`absolute -bottom-0.5 w-1.5 h-1.5 rounded-full bg-primary transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
                                     isActive ? "opacity-100 scale-100" : "opacity-0 scale-0"
                                 }`}
                             />

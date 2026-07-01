@@ -256,12 +256,12 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Progress Steps */}
-                <div className="bg-white border border-gray-250 rounded-xl px-4 py-2.5 flex items-center justify-between mb-6 shadow-sm">
+                <div className="bg-white border border-gray-200 rounded-lg px-4 py-2.5 flex items-center justify-between mb-6 shadow-sm">
                     <span className="text-[11px] font-black text-zinc-950 uppercase tracking-wider">Step {stepIndex + 1} of 3</span>
                     <span className="text-[11px] font-black text-primary uppercase tracking-wider">{stepLabels[stepIndex] || "Complete"}</span>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-250 shadow-md overflow-hidden">
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     {/* Step 1: Account Details */}
                     {step === "form" && (
                         <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
@@ -331,7 +331,7 @@ export default function RegisterPage() {
                                         maxLength={1}
                                         inputMode="numeric"
                                         className={`w-10 h-11 text-center text-base font-black border rounded-lg transition-all outline-none ${
-                                            digit ? "border-primary bg-primary/5 text-primary" : "border-gray-350 bg-white text-black hover:border-gray-400"
+                                            digit ? "border-primary bg-primary/5 text-primary" : "border-gray-300 bg-white text-black hover:border-gray-400"
                                         } focus:border-primary focus:ring-1 focus:ring-primary/10`}
                                     />
                                 ))}

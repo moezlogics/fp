@@ -119,7 +119,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
         }
     };
 
-    const imgHeight = compact ? "h-24 sm:h-28" : "h-28 sm:h-32";
+    const imgHeight = compact ? "aspect-[16/10]" : "aspect-[16/9.5]";
 
     return (
         <div className="relative">
