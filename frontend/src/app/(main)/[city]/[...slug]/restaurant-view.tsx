@@ -464,7 +464,7 @@ export default function RestaurantDetailView({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-5">
+            <div className="lg:col-span-2 space-y-5 min-w-0 w-full overflow-hidden">
               <RestaurantTabs
                 restaurant={serializedRestaurant}
                 deals={serializedDeals}
