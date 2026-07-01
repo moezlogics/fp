@@ -333,7 +333,7 @@ export default function RestaurantDetailView({
             <div className="flex flex-col gap-1 md:gap-2 px-3 sm:px-0">
 
               {/* Row 1: Logo & Name */}
-              <div className="flex items-start md:items-end gap-3 md:gap-5">
+              <div className="flex items-start md:items-end gap-2 md:gap-3.5">
                 {/* Logo Section with Story Ring */}
                 <div className="-mt-8 md:-mt-12 z-50 shrink-0">
                   <StoryRing 
