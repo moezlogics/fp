@@ -75,6 +75,17 @@ export function BookingWidget({ restaurantId, restaurantSlug, restaurantName, de
         return getPakistanDateString();
     });
     const [pax, setPax] = useState(2);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    useEffect(() => {
+        const handleOpen = () => {
+            setIsDrawerOpen(true);
+        };
+        window.addEventListener("open-booking-drawer", handleOpen);
+        return () => {
+            window.removeEventListener("open-booking-drawer", handleOpen);
+        };
+    }, []);
     const [slots, setSlots] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState<any>(null);
@@ -321,9 +332,106 @@ export function BookingWidget({ restaurantId, restaurantSlug, restaurantName, de
     const afternoonSlots = slots.filter((s: any) => { const h = getSlotHour(s); return h !== null && h >= 15 && h < 18; });
     const dinnerSlots = slots.filter((s: any) => { const h = getSlotHour(s); return h !== null && (h >= 18 || h < 11); });
 
+    const wrapResponsive = (formJSX: React.ReactNode) => {
+        return (
+            <>
+                {/* Desktop View: Inline */}
+                <div className="hidden lg:block">
+                    {formJSX}
+                </div>
+
+                {/* Mobile View: CTA + Drawer */}
+                <div className="lg:hidden w-full">
+                    {/* CTA Card */}
+                    <div 
+                        onClick={() => setIsDrawerOpen(true)}
+                        className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-50/50 transition-colors"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                <Calendar className="w-5 h-5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm font-bold text-gray-900">Book a Table</p>
+                                <p className="text-xs text-gray-500 truncate">Select date, time & get instant discounts</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsDrawerOpen(true);
+                            }}
+                            className="bg-primary hover:bg-primary-dark text-white font-bold text-xs px-4 py-2.5 rounded-xl shrink-0 transition active:scale-95 shadow-sm cursor-pointer"
+                        >
+                            Book Now
+                        </button>
+                    </div>
+
+                    {/* Bottom Drawer Modal */}
+                    <AnimatePresence>
+                        {isDrawerOpen && (
+                            <>
+                                {/* Backdrop */}
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 0.6 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => {
+                                        if (step !== "hold") {
+                                            setIsDrawerOpen(false);
+                                        }
+                                    }}
+                                    className="fixed inset-0 bg-black/60 z-[999] pointer-events-auto"
+                                />
+
+                                {/* Drawer Content Panel */}
+                                <motion.div
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: "100%" }}
+                                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                                    className="fixed bottom-0 left-0 right-0 max-h-[90vh] bg-white rounded-t-3xl z-[1000] flex flex-col shadow-2xl pointer-events-auto border-t border-gray-100 overflow-hidden"
+                                >
+                                    {/* Header */}
+                                    <div className="px-4 pt-3 pb-2 border-b border-gray-100 flex flex-col items-center shrink-0 bg-white">
+                                        <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-3" />
+                                        <div className="w-full flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="w-4 h-4 text-primary" />
+                                                <h3 className="font-black text-base text-gray-900">Book a Table</h3>
+                                            </div>
+                                            <button 
+                                                onClick={() => {
+                                                    if (step === "hold") {
+                                                        releaseHold();
+                                                        setStep("select");
+                                                        setBooking(null);
+                                                    }
+                                                    setIsDrawerOpen(false);
+                                                }}
+                                                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition cursor-pointer"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Scrollable Form Content */}
+                                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
+                                        {formJSX}
+                                    </div>
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </>
+        );
+    };
+
     // â”€â”€â”€ CONFIRMED STATE â”€â”€â”€
     if (step === "confirmed" && booking) {
-        return (
+        return wrapResponsive(
             <div className="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden ring-1 ring-black/5">
                 <div className="bg-secondary text-white px-5 py-6 text-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent)]" />
@@ -357,7 +465,7 @@ export function BookingWidget({ restaurantId, restaurantSlug, restaurantName, de
         const mins = Math.floor(countdown / 60);
         const secs = countdown % 60;
         const countdownPct = (countdown / 180) * 100;
-        return (
+        return wrapResponsive(
             <div className="bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden ring-1 ring-black/5">
                 <div className="bg-[linear-gradient(145deg,#111827,#1f2937)] text-white px-4 py-5 sm:px-5">
                     <div className="flex items-start justify-between gap-3 mb-4">
@@ -466,8 +574,8 @@ export function BookingWidget({ restaurantId, restaurantSlug, restaurantName, de
 
     // Main booking widget
 
-    // â€”â€”â€” MAIN BOOKING WIDGET â€”â€”â€”
-    return (
+    // ————— MAIN BOOKING WIDGET —————
+    return wrapResponsive(
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
             {/* Header */}
             <div className="px-3 sm:px-4 py-3 border-b border-gray-100 flex flex-col gap-2">
