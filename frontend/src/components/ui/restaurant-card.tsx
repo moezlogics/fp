@@ -119,14 +119,14 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
         }
     };
 
-    const imgHeight = compact ? "aspect-[16/10]" : "aspect-[16/9.5]";
+    const imgHeight = compact ? "h-20 sm:h-24" : "h-[110px] sm:h-32";
 
     return (
-        <div className="relative h-full flex flex-col">
+        <div className="relative h-full flex flex-col w-full min-w-0 overflow-hidden">
             <Link
                 href={cardUrl}
                 data-route-type="restaurant"
-                className="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-150 flex flex-col h-full flex-1"
+                className="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-150 flex flex-col h-full flex-1 w-full min-w-0"
             >
                 {/* ── Cover Image ── */}
                 <div className={`relative ${imgHeight} w-full overflow-hidden shrink-0 bg-gray-100`} style={{ position: 'relative' }}>
@@ -171,7 +171,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                 </div>
 
                 {/* ── Card Body ── */}
-                <div className="relative px-3 pb-2 pt-5 flex flex-col flex-1">
+                <div className="relative px-3 pb-2 pt-5 flex flex-col flex-1 min-w-0">
                     {/* Overlapping round logo */}
                     <div className="absolute -top-5 left-3 w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-white shadow-md z-10">
                         <Image
@@ -187,8 +187,8 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                     </div>
 
                     {/* Name + Rating */}
-                    <div className="flex flex-col gap-0.5 mb-0.5">
-                        <div className="flex justify-between items-start w-full">
+                    <div className="flex flex-col gap-0.5 mb-0.5 min-w-0">
+                        <div className="flex justify-between items-start w-full min-w-0">
                             <div className="flex min-w-0 items-center gap-1.5 pr-2">
                                 <h3 className="truncate text-sm font-extrabold leading-tight text-black">
                                     {r.brandName || r.name}
@@ -212,7 +212,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                         </div>
 
                         {/* Cuisine + Distance */}
-                        <div className="flex items-center gap-1.5 text-zinc-800 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider min-w-0">
                             <span className="truncate">{r.cuisines?.[0] || r.area}</span>
                             {distance && (
                                 <>

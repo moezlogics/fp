@@ -345,8 +345,8 @@ export default function RestaurantDetailView({
                 </div>
 
                 <div className="flex-1 min-w-0 pb-1 md:pb-2 pt-0.5 md:pt-0 mt-0 md:-mt-6">
-                  <div className="flex flex-col">
-                    <h1 className="text-2xl md:text-4xl font-extrabold leading-tight text-black tracking-tight">
+                  <div className="block md:flex md:flex-col">
+                    <h1 className="text-2xl md:text-4xl font-extrabold leading-tight text-black tracking-tight inline md:block">
                       <span>{r.brandName}{r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : ""}</span>
                       {(r.isVerifiedPartner || r.isFeatured) && (
                         <span className="inline-flex items-center shrink-0 align-middle ml-1.5">
@@ -357,13 +357,14 @@ export default function RestaurantDetailView({
                     </h1>
 
                     {/* Category & Open Status directly under name */}
-                    <div className="mt-0.5 flex items-center gap-2 md:gap-3 flex-wrap">
+                    <div className="inline md:flex items-center gap-2 md:gap-3 flex-wrap md:mt-0.5 ml-2 md:ml-0 align-middle">
                       {r.cuisines?.length > 0 && (
-                        <div className="text-[10px] md:text-[11px] font-bold text-zinc-800 uppercase tracking-wider">
+                        <div className="text-[10px] md:text-[11px] font-semibold text-zinc-500 uppercase tracking-wider inline-block align-middle">
                           <CuisinesLink cuisines={r.cuisines} />
                         </div>
                       )}
-                      <div className="flex items-center">
+                      <span className="text-zinc-400 font-normal inline md:hidden mx-1.5 align-middle">•</span>
+                      <div className="inline-flex items-center align-middle">
                         <DynamicOpenBadge openingHours={r.openingHours || []} />
                       </div>
                     </div>
