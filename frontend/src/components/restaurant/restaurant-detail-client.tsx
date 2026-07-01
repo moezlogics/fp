@@ -1158,18 +1158,18 @@ function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranche
     const r = restaurant;
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-250 p-4 sm:p-6 shadow-md space-y-6 w-full max-w-full overflow-hidden min-w-0">
+        <div className="bg-white rounded-2xl border border-gray-250 p-4 sm:p-6 shadow-md space-y-6 w-full max-w-full min-w-0">
             <h2 className="text-base md:text-lg font-black text-black border-b border-gray-100 pb-2 flex items-center gap-2">
                 <Info className="w-5 h-5 text-primary" /> About & Venue Details
             </h2>
 
             {/* Owner Description */}
             {r.description && (
-                <div className="space-y-2 w-full max-w-full overflow-hidden min-w-0">
+                <div className="space-y-2 w-full min-w-0">
                     <h3 className="text-sm font-black text-black">About {r.brandName || r.name}</h3>
                     <div 
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} 
-                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 font-bold description-text" 
+                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_table]:overflow-x-auto [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 font-bold description-text" 
                     />
                 </div>
             )}
