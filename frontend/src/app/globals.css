@@ -395,7 +395,7 @@
 .description-text,
 .description-text * {
   box-sizing: border-box !important;
-  word-break: normal !important;
+  word-break: keep-all !important;
   overflow-wrap: break-word !important;
   word-wrap: break-word !important;
   white-space: normal !important;
