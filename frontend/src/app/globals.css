@@ -384,3 +384,18 @@
   --input: hsl(0 0% 15%);
   --ring: hsl(357 80% 55%);
 }
+
+/* Restrict description text from breaking mid-word, and force layout compatibility */
+.description-text,
+.description-text * {
+  max-width: 100% !important;
+  width: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  white-space: normal !important;
+  hyphens: none !important;
+}
