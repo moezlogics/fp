@@ -126,7 +126,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
             <Link
                 href={cardUrl}
                 data-route-type="restaurant"
-                className={`group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full card-hover-lift`}
+                className="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-150 flex flex-col h-full"
             >
                 {/* ── Cover Image ── */}
                 <div className={`relative ${imgHeight} w-full overflow-hidden shrink-0 bg-gray-100`} style={{ position: 'relative' }}>
@@ -134,14 +134,13 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                         src={r.coverImage || "/placeholder.jpg"}
                         alt={r.name}
                         fill
-                        quality={70}
+                        quality={85}
                         placeholder="blur"
                         blurDataURL={blurDataUrl}
                         priority={priority}
                         loading={priority ? "eager" : "lazy"}
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 250px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-0" />
 
@@ -152,8 +151,8 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                     {/* Discount Tag */}
                     {discountBadgeText && (
                         <div className="absolute bottom-2 left-2.5 right-2.5 z-[1]">
-                            <div className="inline-flex max-w-full items-center gap-1 rounded-full bg-black/70 px-3 py-1.5 text-[10px] sm:text-[11px] font-extrabold tracking-wide text-white backdrop-blur-sm shadow-lg">
-                                <Tag className="w-3 h-3 shrink-0 text-primary/70" />
+                            <div className="inline-flex max-w-full items-center gap-1 rounded-full bg-black/85 px-3 py-1.5 text-[10px] sm:text-[11px] font-black tracking-wide text-white backdrop-blur-sm shadow-lg">
+                                <Tag className="w-3 h-3 shrink-0 text-primary" />
                                 <span className="block truncate whitespace-nowrap">{discountBadgeText}</span>
                             </div>
                         </div>
@@ -163,7 +162,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                     <button
                         onClick={handleSave}
                         className={`absolute top-2.5 right-2.5 backdrop-blur-md rounded-full p-1.5 transition-all z-10 ${saved
-                            ? "bg-primary/90 text-white"
+                            ? "bg-primary text-white"
                             : "bg-white/20 hover:bg-white/40 text-white"
                             }`}
                     >
@@ -179,7 +178,7 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                             alt={r.name}
                             className="object-cover"
                             fill
-                            quality={60}
+                            quality={85}
                             placeholder="blur"
                             blurDataURL={blurDataUrl}
                             sizes="40px"
@@ -191,10 +190,10 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                     <div className="flex flex-col gap-0.5 mb-0.5">
                         <div className="flex justify-between items-start w-full">
                             <div className="flex min-w-0 items-center gap-1.5 pr-2">
-                                <h3 className="truncate text-sm font-bold leading-tight text-gray-900">
+                                <h3 className="truncate text-sm font-black leading-tight text-black">
                                     {r.brandName || r.name}
                                     {r.branchName && r.branchName !== "Main Branch" && (
-                                        <span className="text-gray-400 font-semibold text-[11px] ml-1">— {r.branchName.replace(/\s*branch\s*/gi, "").trim()}</span>
+                                        <span className="text-zinc-500 font-bold text-[11px] ml-1">— {r.branchName.replace(/\s*branch\s*/gi, "").trim()}</span>
                                     )}
                                 </h3>
                                 {(r.isVerifiedPartner || r.isFeatured) && (
@@ -202,22 +201,22 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                                 )}
                             </div>
                             {r.averageRating > 0 && (
-                                <div className="flex items-center gap-0.5 text-gray-900 font-bold text-xs shrink-0">
+                                <div className="flex items-center gap-0.5 text-black font-black text-xs shrink-0">
                                     <Star className="w-3.5 h-3.5 text-primary fill-primary" />
                                     <span>{r.averageRating.toFixed(1)}</span>
                                     {r.totalReviews > 0 && (
-                                        <span className="text-gray-400 font-normal text-[10px]">({r.totalReviews})</span>
+                                        <span className="text-zinc-500 font-bold text-[10px]">({r.totalReviews})</span>
                                     )}
                                 </div>
                             )}
                         </div>
 
                         {/* Cuisine + Distance */}
-                        <div className="flex items-center gap-1.5 text-gray-500 text-[11px] font-medium">
+                        <div className="flex items-center gap-1.5 text-zinc-950 text-[11px] font-extrabold">
                             <span className="truncate">{r.cuisines?.[0] || r.area}</span>
                             {distance && (
                                 <>
-                                    <span>•</span>
+                                    <span className="text-zinc-400 font-normal">•</span>
                                     <span className="whitespace-nowrap">{distance}</span>
                                 </>
                             )}
@@ -225,18 +224,15 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
                     </div>
 
                     {/* Bottom bar: Open/Closed + Book */}
-                    <div className="flex items-center justify-between mt-auto pt-1 border-t border-gray-50">
+                    <div className="flex items-center justify-between mt-auto pt-1.5 border-t border-gray-100">
                         <div className="flex items-center gap-1.5 text-[11px]">
                             {openStatus.label && (
-                                <>
-                                    <span className="text-gray-400 font-medium">•</span>
-                                    <span className={`font-bold ${openStatus.isOpen ? "text-emerald-600" : "text-gray-400"}`}>
-                                        {openStatus.label}
-                                    </span>
-                                </>
+                                <span className={`font-black ${openStatus.isOpen ? "text-emerald-700" : "text-zinc-500"}`}>
+                                    {openStatus.label}
+                                </span>
                             )}
                         </div>
-                        <span className="bg-primary hover:bg-primary/90 text-white px-2.5 py-1 rounded-md text-[11px] font-bold transition-all btn-press">
+                        <span className="bg-primary hover:bg-primary-dark text-white px-3 py-1 rounded-md text-[10px] font-black tracking-wide uppercase transition-all">
                             Book
                         </span>
                     </div>

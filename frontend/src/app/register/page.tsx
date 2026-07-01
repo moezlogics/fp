@@ -236,12 +236,12 @@ export default function RegisterPage() {
     const stepIndex = ["form", "otp", "profile", "done"].indexOf(step);
     const stepLabels = ["Account", "Verify", "Profile"];
 
-    const inputCls = "w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-[13px] font-medium bg-gray-50/60 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-300";
-    const labelCls = "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
-    const btnCls = "w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:brightness-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-[13px] shadow-sm shadow-primary/15 active:scale-[0.98]";
+    const inputCls = "w-full border border-gray-350 rounded-lg px-3.5 py-2.5 text-[13px] font-semibold bg-white focus:border-primary focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-gray-450 text-black";
+    const labelCls = "block text-[11px] font-black text-black uppercase tracking-wider mb-1.5";
+    const btnCls = "w-full bg-primary hover:bg-primary-dark text-white font-black py-2.5 rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-[13px] shadow-sm active:scale-[0.98] uppercase tracking-wider";
 
     return (
-        <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <div className="max-w-[380px] w-full">
                 {/* Logo */}
                 <div className="text-center mb-6">
@@ -252,36 +252,22 @@ export default function RegisterPage() {
                             <h1 className="text-xl font-black text-primary italic tracking-tight">Foodies Pakistan</h1>
                         )}
                     </Link>
-                    <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-widest mt-1">Create Account</p>
+                    <p className="text-[11px] text-zinc-950 font-black uppercase tracking-widest mt-1">Create Account</p>
                 </div>
 
                 {/* Progress Steps */}
-                <div className="flex items-center justify-center gap-0 mb-6">
-                    {stepLabels.map((label, i) => (
-                        <div key={label} className="flex items-center">
-                            <div className="flex flex-col items-center">
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${stepIndex > i
-                                    ? "bg-primary text-white shadow-sm shadow-primary/20"
-                                    : stepIndex === i
-                                        ? "bg-primary text-white shadow-sm shadow-primary/30"
-                                        : "bg-gray-100 text-gray-400"
-                                    }`}>
-                                    {stepIndex > i ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
-                                </div>
-                                <span className={`text-[9px] font-bold mt-1.5 uppercase tracking-wider ${stepIndex >= i ? "text-gray-700" : "text-gray-300"}`}>{label}</span>
-                            </div>
-                            {i < 2 && <div className={`w-10 h-0.5 mx-1.5 mb-4 transition-all duration-300 ${stepIndex > i ? "bg-primary" : "bg-gray-100"}`} />}
-                        </div>
-                    ))}
+                <div className="bg-white border border-gray-250 rounded-xl px-4 py-2.5 flex items-center justify-between mb-6 shadow-sm">
+                    <span className="text-[11px] font-black text-zinc-950 uppercase tracking-wider">Step {stepIndex + 1} of 3</span>
+                    <span className="text-[11px] font-black text-primary uppercase tracking-wider">{stepLabels[stepIndex] || "Complete"}</span>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl border border-gray-250 shadow-md overflow-hidden">
                     {/* Step 1: Account Details */}
                     {step === "form" && (
                         <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
                             <div className="text-center mb-2">
-                                <h2 className="text-base font-bold text-gray-900 tracking-tight">Join Foodies Pakistan</h2>
-                                <p className="text-[11px] text-gray-400 mt-0.5">Discover the best dining across Pakistan</p>
+                                <h2 className="text-base font-black text-black tracking-tight">Join Foodies Pakistan</h2>
+                                <p className="text-[11px] text-zinc-950 font-bold mt-0.5">Discover the best dining across Pakistan</p>
                             </div>
 
                             {error && <div className="bg-red-50 text-red-600 text-[13px] px-3.5 py-2.5 rounded-lg border border-red-100 font-medium leading-snug">{error}</div>}
@@ -344,107 +330,107 @@ export default function RegisterPage() {
                                         onKeyDown={e => handleOtpKeyDown(i, e)}
                                         maxLength={1}
                                         inputMode="numeric"
-                                        className={`w-10 h-11 text-center text-base font-bold border rounded-lg transition-all outline-none ${
-                                            digit ? "border-primary bg-primary/5 text-primary" : "border-gray-200 bg-gray-50/60 text-gray-900 hover:border-gray-300"
-                                        } focus:border-primary focus:ring-1 focus:ring-primary/20`}
+                                        className={`w-10 h-11 text-center text-base font-black border rounded-lg transition-all outline-none ${
+                                            digit ? "border-primary bg-primary/5 text-primary" : "border-gray-350 bg-white text-black hover:border-gray-400"
+                                        } focus:border-primary focus:ring-1 focus:ring-primary/10`}
                                     />
                                 ))}
-                            </div>
+                             </div>
 
-                            <button type="submit" disabled={loading || otpDigits.join("").length !== 6} className={btnCls}>
-                                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                                {loading ? "Verifying..." : "Verify & Create Account"}
-                            </button>
+                             <button type="submit" disabled={loading || otpDigits.join("").length !== 6} className={btnCls}>
+                                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                                 {loading ? "Verifying..." : "Verify & Create Account"}
+                             </button>
 
-                            <p className="text-center text-[11px] text-gray-400">
-                                Didn&apos;t receive it?{" "}
-                                {resendTimer > 0 ? (
-                                    <span className="text-gray-500 font-semibold">Resend in {resendTimer}s</span>
-                                ) : (
-                                    <button type="button" onClick={handleResendOtp} disabled={loading} className="text-primary font-bold hover:underline">Resend Code</button>
-                                )}
-                            </p>
-                        </form>
-                    )}
+                             <p className="text-center text-[12px] text-zinc-950 font-bold">
+                                 Didn&apos;t receive it?{" "}
+                                 {resendTimer > 0 ? (
+                                     <span className="text-zinc-500 font-bold">Resend in {resendTimer}s</span>
+                                 ) : (
+                                     <button type="button" onClick={handleResendOtp} disabled={loading} className="text-primary font-black hover:underline">Resend Code</button>
+                                 )}
+                             </p>
+                         </form>
+                     )}
 
-                    {/* Step 3: Profile completion */}
-                    {step === "profile" && (
-                        <form onSubmit={handleProfileSubmit} className="p-6 space-y-4">
-                            <div className="text-center mb-2">
-                                <h2 className="text-base font-bold text-gray-900 tracking-tight">Almost Done!</h2>
-                                <p className="text-[11px] text-gray-400 mt-0.5">Complete your profile for seamless bookings</p>
-                            </div>
+                     {/* Step 3: Profile completion */}
+                     {step === "profile" && (
+                         <form onSubmit={handleProfileSubmit} className="p-6 space-y-4">
+                             <div className="text-center mb-2">
+                                 <h2 className="text-base font-black text-black tracking-tight">Almost Done!</h2>
+                                 <p className="text-[11px] text-zinc-950 font-bold mt-0.5">Complete your profile for seamless bookings</p>
+                             </div>
 
-                            {error && <div className="bg-red-50 text-red-600 text-[13px] px-3.5 py-2.5 rounded-lg border border-red-100 font-medium leading-snug">{error}</div>}
+                             {error && <div className="bg-red-50 text-red-600 text-[13px] px-3.5 py-2.5 rounded-lg border border-red-100 font-medium leading-snug">{error}</div>}
 
-                            <div>
-                                <label className={labelCls}>Phone Number *</label>
-                                <input value={phone} onChange={e => setPhone(e.target.value)} required placeholder="03299493973" className={inputCls} />
-                                <p className="text-[10px] text-gray-400 mt-1">Needed for booking confirmations.</p>
-                            </div>
+                             <div>
+                                 <label className={labelCls}>Phone Number *</label>
+                                 <input value={phone} onChange={e => setPhone(e.target.value)} required placeholder="03299493973" className={inputCls} />
+                                 <p className="text-[10px] text-zinc-500 font-bold mt-1">Needed for booking confirmations.</p>
+                             </div>
 
-                            <div>
-                                <label className={labelCls}>City (Optional)</label>
-                                <select value={city} onChange={e => setCity(e.target.value)} className={inputCls}>
-                                    <option value="">Select your city</option>
-                                    <option value="Lahore">Lahore</option>
-                                    <option value="Karachi">Karachi</option>
-                                    <option value="Islamabad">Islamabad</option>
-                                    <option value="Rawalpindi">Rawalpindi</option>
-                                    <option value="Faisalabad">Faisalabad</option>
-                                    <option value="Multan">Multan</option>
-                                    <option value="Peshawar">Peshawar</option>
-                                    <option value="Quetta">Quetta</option>
-                                </select>
-                            </div>
+                             <div>
+                                 <label className={labelCls}>City (Optional)</label>
+                                 <select value={city} onChange={e => setCity(e.target.value)} className={inputCls}>
+                                     <option value="">Select your city</option>
+                                     <option value="Lahore">Lahore</option>
+                                     <option value="Karachi">Karachi</option>
+                                     <option value="Islamabad">Islamabad</option>
+                                     <option value="Rawalpindi">Rawalpindi</option>
+                                     <option value="Faisalabad">Faisalabad</option>
+                                     <option value="Multan">Multan</option>
+                                     <option value="Peshawar">Peshawar</option>
+                                     <option value="Quetta">Quetta</option>
+                                 </select>
+                             </div>
 
-                            <div>
-                                <label className={labelCls}>Choose a Username (Optional)</label>
-                                <div className="relative">
-                                    <input 
-                                        value={username} 
-                                        onChange={e => setUsername(e.target.value)} 
-                                        placeholder="your_cool_name" 
-                                        maxLength={20}
-                                        className={`${inputCls} pr-10 ${usernameStatus === 'unavailable' ? 'border-red-300 focus:border-red-400 focus:ring-red-500/20' : usernameStatus === 'available' ? 'border-green-300 focus:border-green-400 focus:ring-green-500/20' : ''}`} 
-                                    />
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-                                        {usernameStatus === "checking" && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
-                                        {usernameStatus === "available" && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                                        {usernameStatus === "unavailable" && <AlertCircle className="w-4 h-4 text-red-500" />}
-                                    </div>
-                                </div>
-                                {usernameError ? (
-                                    <p className="text-[11px] text-red-500 mt-1.5 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {usernameError}</p>
-                                ) : (
-                                    <p className="text-[11px] text-gray-400 mt-1.5">You can leave this blank to let us generate one for you.</p>
-                                )}
-                            </div>
+                             <div>
+                                 <label className={labelCls}>Choose a Username (Optional)</label>
+                                 <div className="relative">
+                                     <input 
+                                         value={username} 
+                                         onChange={e => setUsername(e.target.value)} 
+                                         placeholder="your_cool_name" 
+                                         maxLength={20}
+                                         className={`${inputCls} pr-10 ${usernameStatus === 'unavailable' ? 'border-red-300 focus:border-red-400 focus:ring-red-500/20' : usernameStatus === 'available' ? 'border-green-300 focus:border-green-400 focus:ring-green-500/20' : ''}`} 
+                                     />
+                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+                                         {usernameStatus === "checking" && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
+                                         {usernameStatus === "available" && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                                         {usernameStatus === "unavailable" && <AlertCircle className="w-4 h-4 text-red-500" />}
+                                     </div>
+                                 </div>
+                                 {usernameError ? (
+                                     <p className="text-[11px] text-red-500 mt-1.5 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {usernameError}</p>
+                                 ) : (
+                                     <p className="text-[11px] text-zinc-500 font-bold mt-1.5">You can leave this blank to let us generate one for you.</p>
+                                 )}
+                             </div>
 
-                            <button type="submit" disabled={loading || usernameStatus === "checking" || usernameStatus === "unavailable"} className={btnCls}>
-                                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                                {loading ? "Saving..." : "Complete Profile"}
-                            </button>
-                        </form>
-                    )}
+                             <button type="submit" disabled={loading || usernameStatus === "checking" || usernameStatus === "unavailable"} className={btnCls}>
+                                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                                 {loading ? "Saving..." : "Complete Profile"}
+                             </button>
+                         </form>
+                     )}
 
-                    {/* Step 4: Done */}
-                    {step === "done" && (
-                        <div className="p-8 text-center space-y-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
-                                <CheckCircle2 className="w-6 h-6 text-primary" />
-                            </div>
-                            <h2 className="text-base font-bold text-gray-900 tracking-tight">Welcome! 🎉</h2>
-                            <p className="text-[11px] text-gray-400">Redirecting you...</p>
-                            <Loader2 className="w-4 h-4 animate-spin mx-auto text-primary" />
-                        </div>
-                    )}
-                </div>
+                     {/* Step 4: Done */}
+                     {step === "done" && (
+                         <div className="p-8 text-center space-y-3">
+                             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                                 <CheckCircle2 className="w-6 h-6 text-primary" />
+                             </div>
+                             <h2 className="text-base font-black text-black tracking-tight">Welcome! 🎉</h2>
+                             <p className="text-[11px] text-zinc-950 font-bold">Redirecting you...</p>
+                             <Loader2 className="w-4 h-4 animate-spin mx-auto text-primary" />
+                         </div>
+                     )}
+                 </div>
 
-                {/* Footer */}
-                <p className="text-center text-[10px] text-gray-400 mt-6 font-medium">
-                    By creating an account, you agree to our Terms & Privacy Policy.
-                </p>
+                 {/* Footer */}
+                 <p className="text-center text-[10px] text-zinc-500 font-bold mt-6">
+                     By creating an account, you agree to our Terms & Privacy Policy.
+                 </p>
             </div>
         </div>
     );

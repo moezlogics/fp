@@ -332,14 +332,11 @@ export default function AccountPage() {
     // ── Unauthenticated ──
     if (status === "unauthenticated") {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4 pb-24" style={{ backgroundColor: "#FAFAFA" }}>
-                <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-3xl" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.06)", border: "1px solid #f0f0f0" }}>
+            <div className="flex min-h-screen flex-col items-center justify-center p-4 pb-24 bg-gray-50">
+                <div className="w-full max-w-md space-y-6 bg-white p-6 sm:p-8 rounded-2xl border border-gray-250 shadow-md">
                     <div className="text-center">
-                        <div className="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center text-white mb-5" style={{ backgroundColor: "#e8323b", boxShadow: "0 8px 24px rgba(232, 50, 59,0.25)" }}>
-                            <User className="w-7 h-7" />
-                        </div>
-                        <h2 className="text-2xl font-black text-gray-900 tracking-tight">Welcome Back</h2>
-                        <span className="mt-2 text-sm font-medium block" style={{ color: "#ADB5BD" }}>
+                        <h2 className="text-2xl font-black text-black tracking-tight">Welcome Back</h2>
+                        <span className="mt-2 text-sm font-bold block text-zinc-950">
                             Sign in to your Foodies Pakistan account
                         </span>
                     </div>

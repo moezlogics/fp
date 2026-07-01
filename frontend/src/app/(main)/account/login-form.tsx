@@ -116,7 +116,7 @@ export function LoginForm() {
 
             {/* Email */}
             <div>
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+                <label className="block text-[11px] font-black text-black uppercase tracking-wider mb-1.5">Email</label>
                 <input
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -124,15 +124,15 @@ export function LoginForm() {
                     required
                     autoComplete="email"
                     placeholder="you@example.com"
-                    className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-[13px] font-medium bg-gray-50/60 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-300"
+                    className="w-full border border-gray-350 rounded-lg px-3.5 py-2.5 text-[13px] font-semibold bg-white focus:border-primary focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-gray-400 text-black"
                 />
             </div>
 
             {/* Password */}
             <div>
                 <div className="flex justify-between items-center mb-1.5">
-                    <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Password</label>
-                    <Link href="/forgot-password" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
+                    <label className="text-[11px] font-black text-black uppercase tracking-wider">Password</label>
+                    <Link href="/forgot-password" className="text-[10px] font-black text-primary hover:underline uppercase tracking-wider">
                         Forgot?
                     </Link>
                 </div>
@@ -144,12 +144,12 @@ export function LoginForm() {
                         required
                         autoComplete="current-password"
                         placeholder="••••••••"
-                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 pr-10 text-[13px] font-medium bg-gray-50/60 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-300"
+                        className="w-full border border-gray-350 rounded-lg px-3.5 py-2.5 pr-10 text-[13px] font-semibold bg-white focus:border-primary focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-gray-400 text-black"
                     />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -158,9 +158,9 @@ export function LoginForm() {
 
             {/* Math CAPTCHA — compact inline */}
             <div>
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Security Check</label>
+                <label className="block text-[11px] font-black text-black uppercase tracking-wider mb-1.5">Security Check</label>
                 <div className="flex items-center gap-2">
-                    <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-mono font-bold text-gray-700 select-none tracking-wider whitespace-nowrap">
+                    <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-mono font-black text-black select-none tracking-wider whitespace-nowrap">
                         {guard.mathQuestion} = ?
                     </div>
                     <input
@@ -171,19 +171,19 @@ export function LoginForm() {
                         required
                         placeholder="?"
                         maxLength={4}
-                        className="w-16 border border-gray-200 rounded-lg px-2.5 py-2 text-[13px] text-center font-bold bg-gray-50/60 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-300"
+                        className="w-16 border border-gray-350 rounded-lg px-2.5 py-2 text-[13px] text-center font-black bg-white focus:border-primary focus:ring-1 focus:ring-primary/10 outline-none transition-all placeholder:text-gray-400 text-black"
                     />
                     <button
                         type="button"
                         onClick={guard.regenerateCaptcha}
-                        className="text-gray-300 hover:text-primary transition-colors p-1 flex-shrink-0"
+                        className="text-gray-400 hover:text-primary transition-colors p-1 flex-shrink-0"
                         title="New question"
                     >
                         <RefreshCw className="w-3.5 h-3.5" />
                     </button>
                 </div>
                 {guard.captchaError && (
-                    <p className="text-[11px] text-red-500 font-medium mt-1">{guard.captchaError}</p>
+                    <p className="text-[11px] text-red-600 font-bold mt-1">{guard.captchaError}</p>
                 )}
             </div>
 
@@ -191,16 +191,16 @@ export function LoginForm() {
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:brightness-105 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-[13px] shadow-sm shadow-primary/15 active:scale-[0.98]"
+                className="w-full bg-primary hover:bg-primary-dark text-white font-black py-2.5 rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-[13px] shadow-sm active:scale-[0.98] uppercase tracking-wider"
             >
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowRight className="w-3.5 h-3.5" />}
                 {loading ? "Signing in..." : "Sign In"}
             </button>
 
             {/* Register link */}
-            <p className="text-center text-[12px] text-gray-400">
+            <p className="text-center text-[12px] text-zinc-950 font-bold">
                 Don&apos;t have an account?{" "}
-                <Link href="/register" className="text-primary font-bold hover:underline">Register here</Link>
+                <Link href="/register" className="text-primary font-black hover:underline">Register here</Link>
             </p>
         </form>
     );

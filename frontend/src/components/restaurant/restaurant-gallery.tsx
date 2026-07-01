@@ -151,7 +151,7 @@ export function RestaurantGallery({
                     setLbIndex(0); // It's the first image in any filtered list because it's first in normalized
                 }}>
                 <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName} - Main Entrance`} fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 66vw, 50vw" priority />
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 66vw, 50vw" priority quality={85} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
             </div>
 
@@ -169,7 +169,7 @@ export function RestaurantGallery({
                             const idx = filtered.findIndex(img => img.url === normalizedImages[i].url);
                             setLbIndex(idx >= 0 ? idx : 0);
                         }}>
-                        <Image src={img.url} alt={img.altText || `${restaurantName} Interior`} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={80} />
+                        <Image src={img.url} alt={img.altText || `${restaurantName} Interior`} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={85} />
                         
                         {isLast && normalizedImages.length > 5 && (
                             <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-4 backdrop-blur-[3px] transition-all group-hover:bg-black/60">
@@ -211,7 +211,7 @@ export function RestaurantGallery({
                     setLbIndex(0);
                 }}>
                 <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName}`} fill
-                    className="object-cover" sizes="(max-width: 768px) 66vw, 50vw" priority />
+                    className="object-cover" sizes="(max-width: 768px) 66vw, 50vw" priority quality={85} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </div>
 
@@ -225,7 +225,7 @@ export function RestaurantGallery({
                         const idx = filtered.findIndex(img => img.url === normalizedImages[1].url);
                         setLbIndex(idx >= 0 ? idx : 0);
                     }}>
-                    <Image src={normalizedImages[1].url} alt={normalizedImages[1].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
+                    <Image src={normalizedImages[1].url} alt={normalizedImages[1].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={85} />
                 </div>
             ) : <div className="bg-gray-50 flex items-center justify-center"><ImageIcon className="w-4 h-4 text-gray-200" /></div>}
 
@@ -239,7 +239,7 @@ export function RestaurantGallery({
                         const idx = filtered.findIndex(img => img.url === normalizedImages[2].url);
                         setLbIndex(idx >= 0 ? idx : 0);
                     }}>
-                    <Image src={normalizedImages[2].url} alt={normalizedImages[2].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={75} />
+                    <Image src={normalizedImages[2].url} alt={normalizedImages[2].altText || `${restaurantName}`} fill className="object-cover" sizes="(max-width: 768px) 33vw, 25vw" placeholder="blur" blurDataURL={blurDataUrl} quality={85} />
                     
                     {normalizedImages.length > 3 && (
                         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center backdrop-blur-[2px]">
