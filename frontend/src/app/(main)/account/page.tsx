@@ -532,7 +532,10 @@ export default function AccountPage() {
 
                 {/* Prime loading skeleton */}
                 {primeLoading && (
-                    <div className="rounded-2xl overflow-hi                {/* ═══ QUICK STATS (Prime Only) ═══ */}
+                    <div className="rounded-xl overflow-hidden animate-pulse bg-zinc-200/50 h-[200px]" />
+                )}
+
+                {/* ═══ QUICK STATS (Prime Only) ═══ */}
                 {isPrime && meData && (
                     <div className="grid grid-cols-3 gap-3">
                         {[
