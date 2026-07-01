@@ -386,16 +386,18 @@
 }
 
 /* Restrict description text from breaking mid-word, and force layout compatibility */
+.description-text {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
 .description-text,
 .description-text * {
-  max-width: 100% !important;
-  width: auto !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
   box-sizing: border-box !important;
   word-break: normal !important;
-  overflow-wrap: normal !important;
-  word-wrap: normal !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
   white-space: normal !important;
   hyphens: none !important;
 }
