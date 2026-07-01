@@ -46,7 +46,7 @@ export function StoryRing({ restaurantId, restaurantName, logoUrl, className }: 
                 }}
             >
                 <div className={cn(
-                    "w-full h-full bg-white rounded-full p-[2px] relative overflow-hidden",
+                    "w-full h-full bg-gray-100 rounded-full p-[2px] relative overflow-hidden",
                     hasStories && "group-hover:scale-[0.97] transition-transform duration-200"
                 )}>
                     {logoUrl ? (

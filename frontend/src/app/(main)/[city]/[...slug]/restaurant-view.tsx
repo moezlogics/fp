@@ -340,7 +340,7 @@ export default function RestaurantDetailView({
                     restaurantId={r._id.toString()} 
                     restaurantName={r.name} 
                     logoUrl={r.logo || ""} 
-                    className="size-[72px] md:size-28"
+                    className="w-[72px] h-[72px] md:w-28 md:h-28"
                   />
                 </div>
 
