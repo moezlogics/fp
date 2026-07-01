@@ -92,7 +92,7 @@ export function HomepageCards({ restaurants, userCitySlug, layout = "grid", sort
                     className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar snap-x snap-mandatory stagger-children"
                 >
                     {sortedRestaurants.map((r: any, i: number) => (
-                        <div key={r._id} className="min-w-[calc(50vw-24px)] sm:min-w-[200px] md:min-w-[240px] shrink-0 snap-start">
+                        <div key={r._id} className="w-[calc(50vw-24px)] min-w-[calc(50vw-24px)] sm:w-[200px] sm:min-w-[200px] md:w-[240px] md:min-w-[240px] shrink-0 snap-start flex flex-col overflow-hidden">
                             <RestaurantCard
                                 restaurant={r}
                                 userCitySlug={userCitySlug}

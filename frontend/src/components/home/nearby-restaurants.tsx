@@ -156,7 +156,7 @@ export function NearbyRestaurants() {
             </div>
             <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar snap-x snap-mandatory">
                 {restaurants.map((r) => (
-                    <div key={r._id} className="min-w-[200px] md:min-w-[240px] shrink-0 snap-start">
+                    <div key={r._id} className="w-[200px] min-w-[200px] md:w-[240px] md:min-w-[240px] shrink-0 snap-start flex flex-col overflow-hidden">
                         <RestaurantCard restaurant={r} />
                     </div>
                 ))}
