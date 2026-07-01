@@ -368,7 +368,6 @@ export default function RestaurantDetailView({
                               <CuisinesLink cuisines={r.cuisines} />
                             </div>
                           )}
-                          <span className="text-zinc-400 font-normal inline md:hidden mx-1.5 align-middle">•</span>
                           <div className="inline-flex items-center align-middle">
                             <DynamicOpenBadge openingHours={r.openingHours || []} />
                           </div>
