@@ -329,7 +329,7 @@ export default function RestaurantDetailView({
         </div>
 
         <main className="max-w-7xl mx-auto px-0 sm:px-3 md:px-6">
-          <div className="relative px-0 z-20 mb-1.5 md:mb-3">
+          <div className="relative px-0 z-20 mb-0">
             <div className="flex flex-col gap-1 md:gap-2 px-3 sm:px-0">
 
               {/* Row 1: Logo & Name */}

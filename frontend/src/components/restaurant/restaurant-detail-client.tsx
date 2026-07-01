@@ -1165,11 +1165,11 @@ function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranche
 
             {/* Owner Description */}
             {r.description && (
-                <div className="space-y-2 w-full max-w-full overflow-hidden min-w-0 [word-break:normal] [overflow-wrap:break-word]">
+                <div className="space-y-2 w-full max-w-full overflow-hidden min-w-0 [word-break:normal] [overflow-wrap:normal] [word-wrap:normal]">
                     <h3 className="text-sm font-black text-black">About {r.brandName || r.name}</h3>
                     <div 
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} 
-                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:!w-auto [&_div]:!w-auto [&_span]:!w-auto [&_p]:!mx-0 [&_div]:!mx-0 [&_h1]:!mx-0 [&_h2]:!mx-0 [&_h3]:!mx-0 [&_h4]:!mx-0 [&_h5]:!mx-0 [&_h6]:!mx-0 [&_p]:!whitespace-normal [&_div]:!whitespace-normal [&_span]:!whitespace-normal [&_*]:max-w-full [&_*]:[!word-break:normal] [&_*]:[!overflow-wrap:break-word] [&_*]:[!hyphens:none] [word-break:normal] [overflow-wrap:break-word] [hyphens:none] font-bold" 
+                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:!w-auto [&_div]:!w-auto [&_span]:!w-auto [&_p]:!mx-0 [&_div]:!mx-0 [&_h1]:!mx-0 [&_h2]:!mx-0 [&_h3]:!mx-0 [&_h4]:!mx-0 [&_h5]:!mx-0 [&_h6]:!mx-0 [&_p]:!whitespace-normal [&_div]:!whitespace-normal [&_span]:!whitespace-normal [&_*]:max-w-full [&_*]:[!word-break:normal] [&_*]:[!overflow-wrap:normal] [&_*]:[!word-wrap:normal] [&_*]:[!hyphens:none] [word-break:normal] [overflow-wrap:normal] [word-wrap:normal] [hyphens:none] font-bold" 
                     />
                 </div>
             )}
