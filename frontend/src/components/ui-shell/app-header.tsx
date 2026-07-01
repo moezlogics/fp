@@ -44,6 +44,21 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
     const searchRef = useRef<HTMLDivElement>(null);
     const mobileSearchRef = useRef<HTMLInputElement>(null);
 
+    const [detecting, setDetecting] = useState(false);
+    const handleDetectLocation = async () => {
+        setDetecting(true);
+        try {
+            await requestBrowserLocation(false);
+            setCityOpen(false);
+            window.location.reload();
+        } catch (err) {
+            console.error("Location detection failed", err);
+            alert("Could not detect location. Please select your city manually.");
+        } finally {
+            setDetecting(false);
+        }
+    };
+
     // ── Scroll: sticky with glassmorphism ──
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -201,7 +216,7 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
         // (user explicitly chose this city, respect their choice for 7 days)
         document.cookie = `foodies_city_manual=1;path=/;max-age=${7 * 24 * 60 * 60}`;
         setCityOpen(false);
-        router.push(`/${city.slug}/`);
+        window.location.href = `/${city.slug}/`;
     };
 
     const handleSearchResultClick = (r: any) => {
@@ -324,6 +339,17 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                                                     <X className="w-4 h-4" />
                                                 </button>
                                             </div>
+
+                                            {/* Detect Location Button */}
+                                            <button 
+                                                onClick={handleDetectLocation}
+                                                disabled={detecting}
+                                                className="flex items-center justify-center gap-2 w-full bg-zinc-950 hover:bg-black disabled:bg-zinc-700 text-white py-2.5 rounded-xl text-xs font-bold transition active:scale-[0.98] mb-3 shadow-xs"
+                                            >
+                                                <Compass className={`w-3.5 h-3.5 ${detecting ? "animate-spin" : ""}`} />
+                                                {detecting ? "Detecting Location..." : "Detect My Location"}
+                                            </button>
+
                                             <div className="grid grid-cols-2 gap-2">
                                                 {cities.map(c => {
                                                     const isActive = c.slug === activeCitySlug;
@@ -377,14 +403,14 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                 {/* ─── MOBILE HEADER ─── */}
                 <div className="md:hidden">
                     <div className="px-3">
-                        <div className="relative flex items-center justify-between h-14 gap-2">
+                        <div className="relative flex items-center justify-between h-12 gap-1.5">
                             {/* Left: City Selector */}
                             <div ref={mobileCityRef} className="relative shrink-0">
                                 <button onClick={() => setCityOpen(!cityOpen)}
-                                    className="flex items-center gap-1.5 bg-white rounded-full pl-3 pr-3.5 py-2 border border-zinc-200 shadow-[0_2px_6px_rgba(0,0,0,0.04)] text-xs font-bold text-zinc-800 active:scale-[0.97] transition-all">
-                                    <MapPin className="w-3.5 h-3.5 text-primary" />
-                                    <span className="font-extrabold text-zinc-950 max-w-[80px] truncate">{activeCity}</span>
-                                    <ChevronDown className={`w-3 h-3 text-zinc-400 transition-transform ${cityOpen ? "rotate-180" : ""}`} />
+                                    className="flex items-center gap-1 bg-white rounded-full pl-2 pr-2.5 py-1 border border-zinc-200 shadow-[0_2px_4px_rgba(0,0,0,0.03)] text-[10px] font-black text-zinc-800 active:scale-[0.97] transition-all">
+                                    <MapPin className="w-3 h-3 text-primary" />
+                                    <span className="font-extrabold text-zinc-950 max-w-[65px] truncate">{activeCity}</span>
+                                    <ChevronDown className={`w-2.5 h-2.5 text-zinc-400 transition-transform ${cityOpen ? "rotate-180" : ""}`} />
                                 </button>
                             </div>
 
@@ -394,14 +420,14 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                             </Link>
 
                             {/* Right: Search + Menu */}
-                            <div className="flex items-center gap-1 shrink-0">
+                            <div className="flex items-center gap-0.5 shrink-0">
                                 <button onClick={() => { setSearchOpen(!searchOpen); setMobileMenu(false); }}
-                                    className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition">
-                                    <Search className="w-5 h-5" />
+                                    className="p-1.5 text-gray-600 hover:bg-gray-50 rounded-full transition">
+                                    <Search className="w-4.5 h-4.5" />
                                 </button>
                                 <button onClick={() => { setMobileMenu(!mobileMenu); setSearchOpen(false); }}
-                                    className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition">
-                                    {mobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                                    className="p-1.5 text-gray-600 hover:bg-gray-50 rounded-full transition">
+                                    {mobileMenu ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}
                                 </button>
                             </div>
                         </div>
@@ -517,6 +543,16 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                             </button>
                         </div>
                         
+                        {/* Detect Location Button */}
+                        <button 
+                            onClick={handleDetectLocation}
+                            disabled={detecting}
+                            className="flex items-center justify-center gap-2 w-full bg-zinc-900 hover:bg-black disabled:bg-zinc-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition active:scale-[0.98] mb-4 shadow-sm"
+                        >
+                            <Compass className={`w-4 h-4 ${detecting ? "animate-spin" : ""}`} />
+                            {detecting ? "Detecting Location..." : "Detect My Location"}
+                        </button>
+
                         <div className="grid grid-cols-2 gap-2.5 mt-2">
                             {cities.map(c => {
                                 const isActive = c.slug === activeCitySlug;

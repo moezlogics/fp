@@ -362,7 +362,6 @@ export default function RestaurantDetailView({
                       const isLongName = fullName.length >= 18;
                       return (
                         <div className={`${isLongName ? "inline" : "flex w-full -mt-1"} md:flex items-center gap-2 md:gap-3 flex-wrap md:mt-0.5 ${isLongName ? "ml-2" : "ml-0"} md:ml-0 align-middle`}>
-                          <span className="text-zinc-400 font-normal inline md:hidden mx-1.5 align-middle">•</span>
                           {r.cuisines?.length > 0 && (
                             <div className="text-[10px] md:text-[11px] font-semibold text-zinc-500 uppercase tracking-wider inline-block align-middle">
                               <CuisinesLink cuisines={r.cuisines} />
