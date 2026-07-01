@@ -888,11 +888,11 @@ export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs
                                 key={tab.id} 
                                 onClick={() => scrollToSection(tab.id)}
                                 className={`flex-1 min-w-[70px] relative py-1 md:py-2.5 flex flex-col sm:flex-row items-center justify-center gap-0.5 md:gap-1.5 transition-all outline-none ${
-                                    isActive ? "text-primary" : "text-gray-400 hover:text-gray-600"
+                                    isActive ? "text-primary" : "text-black hover:text-zinc-800"
                                 }`}
                             >
-                                <Icon className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors ${isActive ? "text-primaryScale-500" : "text-gray-400"}`} />
-                                <span className={`text-[13px] md:text-[16px] font-bold transition-colors ${isActive ? "font-black" : ""}`}>
+                                <Icon className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors ${isActive ? "text-primary" : "text-black"}`} />
+                                <span className={`text-[13px] md:text-[16px] font-black transition-colors`}>
                                     {tab.label}
                                 </span>
                                 

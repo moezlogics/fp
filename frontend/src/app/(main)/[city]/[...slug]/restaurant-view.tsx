@@ -329,8 +329,8 @@ export default function RestaurantDetailView({
         </div>
 
         <main className="max-w-7xl mx-auto px-0 sm:px-3 md:px-6">
-          <div className="relative px-0 z-20 mb-4 md:mb-6">
-            <div className="flex flex-col gap-2.5 md:gap-3.5 px-3 sm:px-0">
+          <div className="relative px-0 z-20 mb-2 md:mb-4">
+            <div className="flex flex-col gap-1.5 md:gap-3 px-3 sm:px-0">
 
               {/* Row 1: Logo & Name */}
               <div className="flex items-start md:items-end gap-3 md:gap-5">
@@ -346,22 +346,20 @@ export default function RestaurantDetailView({
 
                 <div className="flex-1 min-w-0 pb-1 md:pb-2 pt-0.5 md:pt-0 mt-0 md:-mt-6">
                   <div className="flex flex-col">
-                    <h1 className="text-[21px] md:text-4xl font-black leading-tight text-gray-900 tracking-tight flex flex-wrap items-center">
-                      <span className="mr-2">{r.brandName}{r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : ""}</span>
-                      <span className="inline-flex items-center gap-1.5 shrink-0 align-middle">
-                        {(r.isVerifiedPartner || r.isFeatured) && (
-                          <>
-                            <span className="md:hidden"><VerifiedBadge size={14} /></span>
-                            <span className="hidden md:inline-flex"><VerifiedBadge size={20} /></span>
-                          </>
-                        )}
-                      </span>
+                    <h1 className="text-2xl md:text-4xl font-black leading-tight text-black tracking-tight flex flex-wrap items-center gap-1.5">
+                      <span>{r.brandName}{r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : ""}</span>
+                      {(r.isVerifiedPartner || r.isFeatured) && (
+                        <span className="inline-flex items-center shrink-0 align-middle">
+                          <span className="md:hidden"><VerifiedBadge size={16} /></span>
+                          <span className="hidden md:inline-flex"><VerifiedBadge size={22} /></span>
+                        </span>
+                      )}
                     </h1>
 
                     {/* Category & Open Status directly under name */}
-                    <div className="mt-[-2px] md:mt-[-1px] flex items-center gap-2 md:gap-3 flex-wrap">
+                    <div className="mt-0.5 flex items-center gap-2 md:gap-3 flex-wrap">
                       {r.cuisines?.length > 0 && (
-                        <div className="text-[10px] md:text-[11px] font-bold text-gray-400">
+                        <div className="text-[10px] md:text-[11px] font-black text-black uppercase tracking-wider">
                           <CuisinesLink cuisines={r.cuisines} />
                         </div>
                       )}
@@ -382,7 +380,7 @@ export default function RestaurantDetailView({
               </div>
 
               {/* Info Block (Under the logo, aligned left) */}
-              <div className="flex flex-col gap-2.5 px-0.5 mt-3">
+              <div className="flex flex-col gap-1.5 px-0.5 mt-1.5">
                 {/* 1. Address Row */}
                 {(r.address || r.area) && (
                   <div className="flex">
