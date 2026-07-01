@@ -329,8 +329,8 @@ export default function RestaurantDetailView({
         </div>
 
         <main className="max-w-7xl mx-auto px-0 sm:px-3 md:px-6">
-          <div className="relative px-0 z-20 mb-2 md:mb-4">
-            <div className="flex flex-col gap-1.5 md:gap-3 px-3 sm:px-0">
+          <div className="relative px-0 z-20 mb-1.5 md:mb-3">
+            <div className="flex flex-col gap-1 md:gap-2 px-3 sm:px-0">
 
               {/* Row 1: Logo & Name */}
               <div className="flex items-start md:items-end gap-3 md:gap-5">
@@ -346,10 +346,10 @@ export default function RestaurantDetailView({
 
                 <div className="flex-1 min-w-0 pb-1 md:pb-2 pt-0.5 md:pt-0 mt-0 md:-mt-6">
                   <div className="flex flex-col">
-                    <h1 className="text-2xl md:text-4xl font-black leading-tight text-black tracking-tight flex flex-wrap items-center gap-1.5">
+                    <h1 className="text-2xl md:text-4xl font-extrabold leading-tight text-black tracking-tight">
                       <span>{r.brandName}{r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : ""}</span>
                       {(r.isVerifiedPartner || r.isFeatured) && (
-                        <span className="inline-flex items-center shrink-0 align-middle">
+                        <span className="inline-flex items-center shrink-0 align-middle ml-1.5">
                           <span className="md:hidden"><VerifiedBadge size={16} /></span>
                           <span className="hidden md:inline-flex"><VerifiedBadge size={22} /></span>
                         </span>
@@ -359,7 +359,7 @@ export default function RestaurantDetailView({
                     {/* Category & Open Status directly under name */}
                     <div className="mt-0.5 flex items-center gap-2 md:gap-3 flex-wrap">
                       {r.cuisines?.length > 0 && (
-                        <div className="text-[10px] md:text-[11px] font-black text-black uppercase tracking-wider">
+                        <div className="text-[10px] md:text-[11px] font-bold text-zinc-800 uppercase tracking-wider">
                           <CuisinesLink cuisines={r.cuisines} />
                         </div>
                       )}
@@ -380,7 +380,7 @@ export default function RestaurantDetailView({
               </div>
 
               {/* Info Block (Under the logo, aligned left) */}
-              <div className="flex flex-col gap-1.5 px-0.5 mt-1.5">
+              <div className="flex flex-col gap-1 px-0.5 mt-1">
                 {/* 1. Address Row */}
                 {(r.address || r.area) && (
                   <div className="flex">
@@ -388,7 +388,7 @@ export default function RestaurantDetailView({
                       <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0 border border-gray-200">
                         <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </div>
-                      <span className="text-[11px] md:text-[13px] font-black text-black group-hover:text-primary transition-colors truncate max-w-[220px] md:max-w-[360px]">
+                      <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors truncate max-w-[220px] md:max-w-[360px]">
                         {r.address || r.area}
                       </span>
                     </button>
@@ -401,7 +401,7 @@ export default function RestaurantDetailView({
                     <div className={`w-6 h-6 md:w-7 md:h-7 rounded-lg ${todayTiming.isClosed ? 'bg-red-50 text-red-500 border-red-200' : 'bg-gray-100 text-black border-gray-200'} flex items-center justify-center transition-all shrink-0 border`}>
                       <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </div>
-                    <span className={`text-[11px] md:text-[13px] font-black ${todayTiming.isClosed ? 'text-red-700' : 'text-zinc-950'}`}>
+                    <span className={`text-[11px] md:text-[13px] font-bold ${todayTiming.isClosed ? 'text-red-700' : 'text-zinc-900'}`}>
                       {todayTiming.isClosed ? (
                         "Today, Closed"
                       ) : (
@@ -418,7 +418,7 @@ export default function RestaurantDetailView({
                       <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-yellow-50 group-hover:text-yellow-600 transition-all shrink-0 border border-gray-200">
                         <Star className="w-3.5 h-3.5 md:w-4 md:h-4 fill-yellow-500 text-yellow-500" />
                       </div>
-                      <span className="text-[11px] md:text-[13px] font-black text-black group-hover:text-primary transition-colors">
+                      <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">
                         {r.averageRating.toFixed(1)} ({r.totalReviews || 0} Reviews)
                       </span>
                     </button>
@@ -435,7 +435,7 @@ export default function RestaurantDetailView({
                       <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-orange-50 group-hover:text-orange-500 transition-all shrink-0 border border-gray-200">
                         <UtensilsCrossed className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </div>
-                      <span className="text-[11px] md:text-[13px] font-black text-black group-hover:text-primary transition-colors">
+                      <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">
                         View Complete Menu
                       </span>
                     </button>
@@ -452,7 +452,7 @@ export default function RestaurantDetailView({
                     <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-purple-50 group-hover:text-purple-500 transition-all shrink-0 border border-gray-200">
                       <Box className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </div>
-                    <span className="text-[11px] md:text-[13px] font-black text-black group-hover:text-primary transition-colors">
+                    <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">
                       360° Virtual Experience Tour
                     </span>
                   </Link>
@@ -462,7 +462,7 @@ export default function RestaurantDetailView({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-5 min-w-0 w-full overflow-hidden">
+            <div className="lg:col-span-2 space-y-3 md:space-y-5 min-w-0 w-full overflow-hidden">
               <RestaurantTabs
                 restaurant={serializedRestaurant}
                 deals={serializedDeals}

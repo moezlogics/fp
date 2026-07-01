@@ -873,7 +873,7 @@ export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs
     const visibleTabs = allTabs.filter(tab => (hasMenu || tab.id !== "menu") && (hasTour || tab.id !== "tour"));
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2.5 md:gap-4">
             {/* Sticky Tab Bar - Simplified Creative Design */}
             <div 
                 id="tabs-section" 
