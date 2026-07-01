@@ -507,16 +507,16 @@ export default function RestaurantDetailView({
             transition={{ type: "spring", damping: 25, stiffness: 120, delay: 0.1 }}
             className="fixed bottom-4 left-0 right-0 z-50 lg:hidden flex justify-center pointer-events-none px-4"
           >
-            <a
-              href="#booking-mobile"
-              className="pointer-events-auto group relative flex items-center justify-center gap-1.5 w-full max-w-[180px] bg-primary text-white font-bold text-[13px] py-2.5 rounded-full shadow-lg shadow-primary/30 active:scale-[0.96] transition-transform"
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("open-booking-drawer"))}
+              className="pointer-events-auto group relative flex items-center justify-center gap-1.5 w-full max-w-[180px] bg-primary text-white font-bold text-[13px] py-2.5 rounded-full shadow-lg shadow-primary/30 active:scale-[0.96] transition-transform cursor-pointer"
             >
               <Calendar className="w-3.5 h-3.5 text-white/90" />
               <span className="tracking-wide">Book a Table</span>
               <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center ml-1 group-hover:bg-white/30 transition-colors">
                 <ArrowRight className="w-2.5 h-2.5 text-white" />
               </div>
-            </a>
+            </button>
           </motion.div>
         </AnimatePresence>
       </div>
