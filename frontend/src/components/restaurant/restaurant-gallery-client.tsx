@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { RestaurantClientProps } from "@/lib/restaurant-client-props";
 
 const RestaurantGallery = dynamic(
   () =>
