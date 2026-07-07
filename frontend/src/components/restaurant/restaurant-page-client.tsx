@@ -123,7 +123,7 @@ export default function RestaurantPageClient({
                     <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0 border border-gray-200">
                       <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </div>
-                    <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors truncate max-w-[220px] md:max-w-[360px]">
+                    <span className="text-[11px] md:text-[13px] font-medium text-zinc-700 group-hover:text-primary transition-colors truncate max-w-[220px] md:max-w-[360px]">
                       {r.address || r.area}
                     </span>
                   </button>
@@ -134,11 +134,11 @@ export default function RestaurantPageClient({
                   <div className={`w-6 h-6 md:w-7 md:h-7 rounded-lg ${todayTiming.isClosed ? "bg-red-50 text-red-500 border-red-200" : "bg-gray-100 text-black border-gray-200"} flex items-center justify-center shrink-0 border`}>
                     <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </div>
-                  <span className={`text-[11px] md:text-[13px] font-bold ${todayTiming.isClosed ? "text-red-700" : "text-zinc-900"}`}>
+                  <span className={`text-[11px] md:text-[13px] font-medium ${todayTiming.isClosed ? "text-red-700" : "text-zinc-700"}`}>
                     {todayTiming.isClosed ? (
                       "Today, Closed"
                     ) : (
-                      <>Today Timing: <span className="text-black font-extrabold">{to12h(todayTiming.open)} - {to12h(todayTiming.close)}</span></>
+                      <>Today Timing: <span className="text-black font-semibold">{to12h(todayTiming.open)} - {to12h(todayTiming.close)}</span></>
                     )}
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export default function RestaurantPageClient({
                     <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-yellow-50 group-hover:text-yellow-600 transition-all shrink-0 border border-gray-200">
                       <Star className="w-3.5 h-3.5 md:w-4 md:h-4 fill-yellow-500 text-yellow-500" />
                     </div>
-                    <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">
+                    <span className="text-[11px] md:text-[13px] font-medium text-zinc-700 group-hover:text-primary transition-colors">
                       {r.averageRating.toFixed(1)} ({r.totalReviews || 0} Reviews)
                     </span>
                   </button>
@@ -161,7 +161,7 @@ export default function RestaurantPageClient({
                     <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-orange-50 group-hover:text-orange-500 transition-all shrink-0 border border-gray-200">
                       <UtensilsCrossed className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </div>
-                    <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">View Complete Menu</span>
+                    <span className="text-[11px] md:text-[13px] font-medium text-zinc-700 group-hover:text-primary transition-colors">View Complete Menu</span>
                   </button>
                 </div>
               )}
@@ -170,7 +170,7 @@ export default function RestaurantPageClient({
                   <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-gray-100 flex items-center justify-center text-black group-hover:bg-purple-50 group-hover:text-purple-500 transition-all shrink-0 border border-gray-200">
                     <Box className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </div>
-                  <span className="text-[11px] md:text-[13px] font-bold text-zinc-900 group-hover:text-primary transition-colors">360° Virtual Experience Tour</span>
+                  <span className="text-[11px] md:text-[13px] font-medium text-zinc-700 group-hover:text-primary transition-colors">360° Virtual Experience Tour</span>
                 </Link>
               )}
             </div>
