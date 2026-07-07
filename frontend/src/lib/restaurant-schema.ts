@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
 
+import { buildRestaurantSeoDescription, buildRestaurantSeoTitle } from "@/lib/restaurant-seo";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://foodiespakistan.pk";
 
 function stripHtml(html: string) {
@@ -132,21 +134,7 @@ export function buildRestaurantJsonLd({
       validThrough: d.validTo ? new Date(d.validTo).toISOString() : undefined,
     }));
 
-  const maxBankDeal = (deals || []).reduce(
-    (max: number, d: any) => Math.max(max, d?.discountPercent || 0),
-    0,
-  );
-  const maxCap = r.bookingSettings?.maxDiscountCap || 0;
-  const maxDiscount = Math.max(maxBankDeal, maxCap);
-  const hasMultipleBranches = Boolean(
-    r.parentBrandId || (r.isHeadOffice && r.branchName && r.branchName !== "Main Branch"),
-  );
-  const cleanBranch = (r.branchName || "").replace(/\s*branch\s*/gi, "").trim();
-  const nameForTitle =
-    hasMultipleBranches && cleanBranch
-      ? `${r.brandName} ${cleanBranch}`
-      : `${r.brandName || r.name} ${r.city}`;
-  const discountTag = maxDiscount > 0 ? ` Get ${maxDiscount}% OFF` : "";
+  const seoTitle = buildRestaurantSeoTitle(r, deals || []);
 
   const categoriesMap = new Map<string, any[]>();
 
@@ -193,12 +181,7 @@ export function buildRestaurantJsonLd({
     "@type": "WebPage",
     "@id": `${restaurantUrl}#webpage`,
     url: restaurantUrl,
-    name: `${nameForTitle} Menu, Reviews, Bank Card Deals & Discounts${discountTag}`,
-    description: stripHtml(
-      r.metaDescription ||
-        r.description ||
-        `${r.name} — dine-in restaurant in ${r.area}, ${r.city}`,
-    ),
+    name: seoTitle,
     isPartOf: { "@id": `${SITE_URL}#website` },
     mainEntity: { "@id": `${restaurantUrl}#restaurant` },
     inLanguage: "en-PK",
@@ -220,11 +203,6 @@ export function buildRestaurantJsonLd({
         ? [r.coverImage, ...(r.galleryImages || [])].filter(Boolean)
         : undefined,
     url: restaurantUrl,
-    description: stripHtml(
-      r.metaDescription ||
-        r.description ||
-        `${r.name} — dine-in restaurant in ${r.area}, ${r.city}`,
-    ),
     telephone: r.phone || undefined,
     email: r.email || undefined,
     sameAs: socialLinks.length > 0 ? socialLinks : undefined,

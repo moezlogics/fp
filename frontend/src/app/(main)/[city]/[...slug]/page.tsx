@@ -4,6 +4,7 @@ import { apiClient } from "@/lib/api-client";
 import { withRedisCache } from "@/lib/redis-cache";
 import { notFound } from "next/navigation";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { buildRestaurantSeoDescription, buildRestaurantSeoTitle } from "@/lib/restaurant-seo";
 import RestaurantDetailView from "./restaurant-view";
 import ArchiveView from "./archive-view";
 import VirtualTourView from "./virtual-tour-view";
@@ -106,27 +107,8 @@ export async function generateMetadata({
     if (restaurantPayload?.restaurant) {
       const r = restaurantPayload.restaurant;
       const deals = restaurantPayload.deals || [];
-      const cuisineStr = r.cuisines?.slice(0, 3).join(", ") || "";
-      const ratingStr =
-        r.averageRating > 0
-          ? ` ${r.averageRating.toFixed(1)} (${r.totalReviews || 0} reviews)`
-          : "";
-      const description =
-        r.metaDescription ||
-        `Serving ${cuisineStr || "multi-cuisine"} in ${r.area}, ${r.city}.${ratingStr ? ` Rated ${r.averageRating.toFixed(1)}/5 by ${r.totalReviews || 0} diners.` : ""} Find ${r.name} menu, deals & discounts, reviews and book a table instantly on ${siteName}.`;
-      
-      const hasMultipleBranches = Boolean(r.parentBrandId || (r.isHeadOffice && r.branchName && r.branchName !== "Main Branch"));
-      const cleanBranch = (r.branchName || "").replace(/\s*branch\s*/gi, "").trim();
-      const nameForTitle = hasMultipleBranches && cleanBranch
-        ? `${r.brandName} ${cleanBranch}`
-        : `${r.brandName || r.name}${r.city ? ` ${r.city}` : ""}`;
-
-      const maxBankDeal = deals.reduce((max: number, d: any) => Math.max(max, d?.discountPercent || 0), 0);
-      const maxCap = r.bookingSettings?.maxDiscountCap || 0;
-      const maxDiscount = Math.max(maxBankDeal, maxCap);
-      const discountTag = maxDiscount > 0 ? ` Get ${maxDiscount}% OFF` : "";
-
-      const title = `${nameForTitle} Menu, Reviews, Bank Card Deals & Discounts${discountTag}`;
+      const description = buildRestaurantSeoDescription(r, deals, siteName);
+      const title = buildRestaurantSeoTitle(r, deals);
       const pageUrl = `${SITE_URL}/${city}/${slug[0]}/`;
       const images = r.coverImage
         ? [{ url: r.coverImage, width: 1200, height: 630, alt: r.name }]
@@ -141,7 +123,7 @@ export async function generateMetadata({
         robots: { index: true, follow: true },
         ...(lastModDate ? { other: { "last-modified": lastModDate } } : {}),
         openGraph: {
-          title: `${nameForTitle} Menu, Reviews, Deals & Discounts${discountTag}`,
+          title: title.replace("Bank Card Deals & Discounts", "Deals & Discounts"),
           description,
           url: pageUrl,
           siteName,
@@ -151,7 +133,7 @@ export async function generateMetadata({
         },
         twitter: {
           card: "summary_large_image",
-          title: `${nameForTitle} Menu, Reviews, Deals & Discounts${discountTag}`,
+          title: title.replace("Bank Card Deals & Discounts", "Deals & Discounts"),
           description,
           images: r.coverImage ? [r.coverImage] : [],
         },

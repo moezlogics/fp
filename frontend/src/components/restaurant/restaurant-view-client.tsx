@@ -10,6 +10,7 @@ import { DynamicOpenBadge } from "@/components/restaurant/dynamic-open-badge";
 import { SimilarCard } from "@/components/restaurant/similar-card";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { BookingWidget, RestaurantTabs } from "@/components/restaurant/restaurant-detail-client";
+import type { ReactNode } from "react";
 import type { RestaurantClientProps } from "@/lib/restaurant-client-props";
 
 const StoryRing = dynamic(
@@ -32,7 +33,6 @@ export default function RestaurantViewClient({
   slug,
   restaurantId,
   restaurant: r,
-  aboutHtml,
   deals,
   otherBranches,
   similarRestaurants,
@@ -41,7 +41,8 @@ export default function RestaurantViewClient({
   hasMenu,
   todayTiming,
   hasVirtualTour,
-}: RestaurantClientProps) {
+  children,
+}: RestaurantClientProps & { children?: ReactNode }) {
   const fullName =
     r.brandName + (r.branchName && r.branchName !== "Main Branch" ? ` ${r.branchName}` : "");
   const isLongName = fullName.length >= 18;
@@ -203,7 +204,7 @@ export default function RestaurantViewClient({
           <div className="lg:col-span-2 space-y-3 md:space-y-5 min-w-0 w-full overflow-hidden">
             <RestaurantTabs
               restaurant={r}
-              aboutHtml={aboutHtml}
+              aboutSlot={children}
               deals={deals}
               otherBranches={otherBranches}
               faqs={faqs}

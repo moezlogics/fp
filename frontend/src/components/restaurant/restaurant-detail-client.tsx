@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
@@ -789,7 +789,7 @@ type TabId = "menu" | "deals" | "about" | "reviews" | "tour";
 
 interface TabContentProps {
     restaurant: any;
-    aboutHtml?: string;
+    aboutSlot?: ReactNode;
     deals: any[];
     otherBranches: any[];
     faqs: { question: string; answer: string }[];
@@ -797,7 +797,7 @@ interface TabContentProps {
     restaurantId: string;
 }
 
-export function RestaurantTabs({ restaurant, aboutHtml, deals, otherBranches, faqs, hasMenu = true, restaurantId }: TabContentProps) {
+export function RestaurantTabs({ restaurant, aboutSlot, deals, otherBranches, faqs, hasMenu = true, restaurantId }: TabContentProps) {
     const [activeTab, setActiveTab] = useState<TabId>(hasMenu ? "menu" : "deals");
     const [showTourFullscreen, setShowTourFullscreen] = useState(false);
     const r = restaurant;
@@ -935,7 +935,7 @@ export function RestaurantTabs({ restaurant, aboutHtml, deals, otherBranches, fa
                 )}
 
                 <section id="section-about" className="scroll-mt-[130px]">
-                    <AboutTab restaurant={r} otherBranches={otherBranches} aboutHtml={aboutHtml} />
+                    <AboutTab restaurant={r} otherBranches={otherBranches} aboutSlot={aboutSlot} />
                     
                     {faqs?.length > 0 && (
                         <div className="mt-6">
@@ -1163,7 +1163,7 @@ function MenuTab({ restaurant, restaurantId }: { restaurant: any; restaurantId: 
 
 
 /* ─── ABOUT TAB ─── */
-function AboutTab({ restaurant, otherBranches, aboutHtml }: { restaurant: any; otherBranches: any[]; aboutHtml?: string }) {
+function AboutTab({ restaurant, otherBranches, aboutSlot }: { restaurant: any; otherBranches: any[]; aboutSlot?: ReactNode }) {
     const r = restaurant;
 
     return (
@@ -1172,15 +1172,7 @@ function AboutTab({ restaurant, otherBranches, aboutHtml }: { restaurant: any; o
                 <Info className="w-5 h-5 text-primary" /> About & Venue Details
             </h2>
 
-            {aboutHtml && (
-                <div className="space-y-2 w-full min-w-0">
-                    <h3 className="text-sm font-black text-black">About {r.brandName || r.name}</h3>
-                    <div
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aboutHtml) }}
-                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_table]:overflow-x-auto [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 font-bold description-text"
-                    />
-                </div>
-            )}
+            {aboutSlot}
 
             {/* Location */}
             <div id="about-location" className="border-t border-gray-100 pt-6 space-y-3">

@@ -49,7 +49,6 @@ export function buildRestaurantClientProps({
     slug,
     restaurantId: String(r._id),
     restaurant: slimRestaurantForClient(r),
-    aboutHtml: r.description || "",
     deals: slimDealsForClient(deals || []),
     otherBranches: slimBranchesForClient(otherBranches || []),
     similarRestaurants: slimSimilarForClient(similarRestaurants || []),
@@ -61,7 +60,6 @@ export function buildRestaurantClientProps({
       : null,
     hasVirtualTour:
       (r.virtualTour?.scenes?.length || 0) > 0 && r.virtualTour?.status === "published",
-    // Menu + reviews are NOT passed — fetched client-side to keep RSC payload small
   };
 }
 

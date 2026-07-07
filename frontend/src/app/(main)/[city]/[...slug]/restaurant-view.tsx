@@ -1,6 +1,7 @@
 import { preload } from "react-dom";
 import { buildRestaurantJsonLd, serializeJsonLd } from "@/lib/restaurant-schema";
 import { buildRestaurantClientProps } from "@/lib/restaurant-client-props";
+import RestaurantAboutDescription from "@/components/restaurant/restaurant-about-description";
 import RestaurantViewClient from "@/components/restaurant/restaurant-view-client";
 
 export default function RestaurantDetailView({
@@ -27,7 +28,15 @@ export default function RestaurantDetailView({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-      <RestaurantViewClient {...clientProps} />
+      <RestaurantViewClient {...clientProps}>
+        {r.description ? (
+          <RestaurantAboutDescription
+            html={r.description}
+            brandName={r.brandName}
+            name={r.name}
+          />
+        ) : null}
+      </RestaurantViewClient>
     </>
   );
 }
