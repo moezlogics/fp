@@ -13,9 +13,13 @@ type Props = {
 export default function RestaurantAboutDescription({ html, brandName, name }: Props) {
   if (!html?.trim()) return null;
 
-  // Replace &nbsp; and unicode non-breaking spaces with normal spaces
-  // to allow proper word boundary reading by search bots and natural text wrapping.
-  const cleanHtml = html.replace(/&nbsp;/g, " ").replace(/\u00a0/g, " ");
+  // Replace &nbsp; and unicode non-breaking spaces with normal spaces,
+  // and strip out all inline CSS style attributes (e.g. style="...") 
+  // that were copied over from rich text editors.
+  const cleanHtml = html
+    .replace(/&nbsp;/g, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/\s*style=(["'])(.*?)\1/gi, "");
 
   return (
     <div className="space-y-2 w-full min-w-0">
