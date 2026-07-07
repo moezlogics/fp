@@ -5,8 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Clock, MapPin, UtensilsCrossed, Star, Box, ArrowRight, Calendar } from "lucide-react";
 import { CuisinesLink } from "@/components/restaurant/cuisines-link";
-import RestaurantLcpCover from "@/components/restaurant/restaurant-lcp-cover";
-import { RestaurantGalleryClient } from "@/components/restaurant/restaurant-gallery-client";
+import { RestaurantGallery } from "@/components/restaurant/restaurant-gallery";
 import { DynamicOpenBadge } from "@/components/restaurant/dynamic-open-badge";
 import { SimilarCard } from "@/components/restaurant/similar-card";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
@@ -50,30 +49,19 @@ export default function RestaurantViewClient({
   return (
     <div className="bg-gray-50 min-h-screen pb-20 md:pb-8">
       <div className="md:max-w-7xl md:mx-auto md:px-6 md:pt-6">
-        <div className="relative">
-          {r.coverImage && (
-            <RestaurantLcpCover
-              coverImage={r.coverImage}
-              coverImageAlt={r.coverImageAlt}
-              restaurantName={r.name}
-            />
-          )}
-          <div className="absolute inset-0 z-10">
-            <RestaurantGalleryClient
-            restaurantId={restaurantId}
-            restaurantSlug={slug}
-            restaurantName={r.name}
-            coverImage={r.coverImage}
-            coverImageAlt={r.coverImageAlt}
-            galleryImages={r.galleryImages || []}
-            videoUrl={r.videoUrl}
-            discountLabel={r.discountLabel}
-            isPrimePartner={r.bookingSettings?.isPrimePartner}
-            isVerifiedPartner={r.isVerifiedPartner}
-            isFeatured={r.isFeatured}
-            />
-          </div>
-        </div>
+        <RestaurantGallery
+          restaurantId={restaurantId}
+          restaurantSlug={slug}
+          restaurantName={r.name}
+          coverImage={r.coverImage}
+          coverImageAlt={r.coverImageAlt}
+          galleryImages={r.galleryImages || []}
+          videoUrl={r.videoUrl}
+          discountLabel={r.discountLabel}
+          isPrimePartner={r.bookingSettings?.isPrimePartner}
+          isVerifiedPartner={r.isVerifiedPartner}
+          isFeatured={r.isFeatured}
+        />
       </div>
 
       <main className="max-w-7xl mx-auto px-0 sm:px-3 md:px-6">

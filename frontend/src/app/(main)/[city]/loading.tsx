@@ -1,10 +1,20 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { ArchivePageSkeleton } from "@/components/ui/skeletons";
 
 /**
- * City Loading Skeleton — Server Component
- * Shows archive skeleton for city-level routes like /lahore
- * Server-rendered for instant paint — no client JS needed
+ * Only show city/archive skeleton for pure city routes (/lahore).
+ * For /lahore/restaurant-slug or /lahore/area/category, return null so
+ * [...slug]/loading.tsx handles the correct skeleton (avoids archive flash).
  */
 export default function CityLoading() {
+  const pathname = usePathname() || "";
+  const segments = pathname.split("/").filter(Boolean);
+
+  if (segments.length !== 1) {
+    return null;
+  }
+
   return <ArchivePageSkeleton />;
 }

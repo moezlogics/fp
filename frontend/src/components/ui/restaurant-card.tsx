@@ -126,6 +126,9 @@ export function RestaurantCard({ restaurant: r, compact = false, userCitySlug, p
             <Link
                 href={cardUrl}
                 data-route-type="restaurant"
+                onPointerDown={() => {
+                    sessionStorage.setItem("next_route_type", "restaurant");
+                }}
                 className="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-150 flex flex-col h-full flex-1 w-full min-w-0"
             >
                 {/* ── Cover Image ── */}

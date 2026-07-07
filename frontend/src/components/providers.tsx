@@ -17,21 +17,23 @@ import { AuthModalProvider } from "@/components/auth/auth-modal";
  */
 function RouteTypeTracker() {
     useEffect(() => {
-        const handleClick = (e: MouseEvent) => {
+        const handleIntent = (e: Event) => {
             const target = e.target as HTMLElement;
             const link = target.closest("a");
             if (!link) return;
 
             const routeType = link.getAttribute("data-route-type");
-            if (routeType) {
+            if (routeType === "restaurant" || routeType === "archive") {
                 sessionStorage.setItem("next_route_type", routeType);
             }
-            // Do NOT clear on untagged links — let the inline script's
-            // URL heuristic handle the fallback
         };
 
-        document.addEventListener("click", handleClick, true);
-        return () => document.removeEventListener("click", handleClick, true);
+        document.addEventListener("pointerdown", handleIntent, true);
+        document.addEventListener("click", handleIntent, true);
+        return () => {
+            document.removeEventListener("pointerdown", handleIntent, true);
+            document.removeEventListener("click", handleIntent, true);
+        };
     }, []);
     return null;
 }

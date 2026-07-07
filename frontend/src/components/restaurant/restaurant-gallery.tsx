@@ -127,10 +127,6 @@ export function RestaurantGallery({
     }, []);
 
     useEffect(() => {
-        document.getElementById("restaurant-lcp-cover")?.classList.add("hidden");
-    }, []);
-
-    useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (shareRef.current && !shareRef.current.contains(e.target as Node)) setShareOpen(false);
         };
