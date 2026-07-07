@@ -1,37 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/**
- * Strip heavy Mongo/API fields before passing restaurant data to client
- * components. Full objects were serialized 4–5× in RSC flight + HTML (same
- * issue as mobilestore.pk rich_description).
- */
-export function slimRestaurantForClient(r: any) {
-  if (!r) return r;
-
-  const {
-    description,
-    metaDescription,
-    galleryImages,
-    menuItems,
-    similarRestaurants,
-    reviews,
-    deals,
-    otherBranches,
-    specialOverrides,
-    embedding,
-    __v,
-    createdAt,
-    updatedAt,
-    virtualTour,
-    ...rest
-  } = r;
-
+export function slimRestaurantForHeader(r: any) {
   return {
-    ...rest,
-    virtualTour: virtualTour
+    _id: r._id,
+    name: r.name,
+    brandName: r.brandName,
+    branchName: r.branchName,
+    city: r.city,
+    area: r.area,
+    address: r.address,
+    cuisines: r.cuisines,
+    openingHours: r.openingHours,
+    averageRating: r.averageRating,
+    totalReviews: r.totalReviews,
+    isVerifiedPartner: r.isVerifiedPartner,
+    isFeatured: r.isFeatured,
+    coverImage: r.coverImage,
+    coverImageAlt: r.coverImageAlt,
+    videoUrl: r.videoUrl,
+    discountLabel: r.discountLabel,
+    logo: r.logo,
+    isPrimePartner: r.bookingSettings?.isPrimePartner,
+  };
+}
+
+export function slimRestaurantForTabs(r: any) {
+  return {
+    _id: r._id,
+    name: r.name,
+    brandName: r.brandName,
+    branchName: r.branchName,
+    city: r.city,
+    area: r.area,
+    address: r.address,
+    phone: r.phone,
+    website: r.website,
+    cuisines: r.cuisines,
+    menuImages: r.menuImages,
+    openingHours: r.openingHours,
+    location: r.location,
+    logo: r.logo,
+    coverImage: r.coverImage,
+    facilities: r.facilities,
+    vibes: r.vibes,
+    restaurantType: r.restaurantType,
+    category: r.category,
+    virtualTour: r.virtualTour
       ? {
-          status: virtualTour.status,
-          sceneCount: virtualTour.scenes?.length || 0,
+          status: r.virtualTour.status,
+          sceneCount: r.virtualTour.scenes?.length || 0,
         }
       : undefined,
   };
@@ -42,17 +59,11 @@ export function slimDealsForClient(deals: any[] = []) {
     _id: d._id,
     discountPercent: d.discountPercent,
     minSpend: d.minSpend,
-    minSpendPaisa: d.minSpendPaisa,
-    maxDiscountCap: d.maxDiscountCap,
     cardType: d.cardType,
     daysValid: d.daysValid,
-    description: d.description,
+    maxDiscountCap: d.maxDiscountCap,
     bankId: d.bankId
-      ? {
-          name: d.bankId.name,
-          logo: d.bankId.logo,
-          color: d.bankId.color,
-        }
+      ? { name: d.bankId.name, logo: d.bankId.logo, color: d.bankId.color }
       : undefined,
   }));
 }
@@ -62,14 +73,11 @@ export function slimBranchesForClient(branches: any[] = []) {
     _id: b._id,
     name: b.name,
     brandName: b.brandName,
-    branchName: b.branchName,
     slug: b.slug,
     city: b.city,
     area: b.area,
-    address: b.address,
     coverImage: b.coverImage,
     averageRating: b.averageRating,
-    totalReviews: b.totalReviews,
   }));
 }
 
@@ -87,8 +95,6 @@ export function slimSimilarForClient(restaurants: any[] = []) {
     averageRating: r.averageRating,
     totalReviews: r.totalReviews,
     discountLabel: r.discountLabel,
-    openingHours: r.openingHours,
-    location: r.location,
     bookingSettings: r.bookingSettings
       ? { maxDiscountCap: r.bookingSettings.maxDiscountCap }
       : undefined,

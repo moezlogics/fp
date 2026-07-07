@@ -41,7 +41,6 @@ export function buildRestaurantJsonLd({
     reviews,
     deals,
     otherBranches,
-    menuItems: menuData,
   } = payload;
 
   const restaurantUrl = `${SITE_URL}/${city}/${slug}/`;
@@ -82,7 +81,7 @@ export function buildRestaurantJsonLd({
   const faqSchema: any = {
     "@type": "FAQPage",
     "@id": `${restaurantUrl}#faq`,
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: faqs.slice(0, 6).map((faq) => ({
       "@type": "Question",
       name: stripHtml(faq.question),
       acceptedAnswer: { "@type": "Answer", text: stripHtml(faq.answer) },
@@ -136,47 +135,6 @@ export function buildRestaurantJsonLd({
 
   const seoTitle = buildRestaurantSeoTitle(r, deals || []);
 
-  const categoriesMap = new Map<string, any[]>();
-
-  if (Array.isArray(menuData)) {
-    menuData.forEach((item: any) => {
-      const catName = item.categoryId?.name || item.category || "Other";
-      if (!categoriesMap.has(catName)) categoriesMap.set(catName, []);
-      categoriesMap.get(catName)!.push(item);
-    });
-  } else if (menuData?.menu) {
-    Object.entries(menuData.menu).forEach(([catName, items]) => {
-      categoriesMap.set(catName, items as any[]);
-    });
-  }
-
-  const menuSchema: any = {
-    "@type": "Menu",
-    "@id": `${restaurantUrl}#menu`,
-    name: `${r.name} Digital Menu`,
-    mainEntityOfPage: restaurantUrl,
-    inLanguage: "en-PK",
-    hasMenuSection: Array.from(categoriesMap.entries())
-      .slice(0, 12)
-      .map(([catName, items]) => ({
-        "@type": "MenuSection",
-        name: catName,
-        hasMenuItem: items.slice(0, 8).map((item: any) => ({
-          "@type": "MenuItem",
-          name: item.name,
-          ...(item.description
-            ? { description: stripHtml(item.description).slice(0, 160) }
-            : {}),
-          ...(item.image ? { image: item.image } : {}),
-          offers: {
-            "@type": "Offer",
-            price: Number(item.price || 0),
-            priceCurrency: "PKR",
-          },
-        })),
-      })),
-  };
-
   const restaurantWebPageSchema = {
     "@type": "WebPage",
     "@id": `${restaurantUrl}#webpage`,
@@ -198,10 +156,7 @@ export function buildRestaurantJsonLd({
     name: r.name,
     alternateName:
       r.brandName && r.branchName ? `${r.brandName} ${r.branchName}` : undefined,
-    image:
-      [r.coverImage, ...(r.galleryImages || [])].filter(Boolean).length > 0
-        ? [r.coverImage, ...(r.galleryImages || [])].filter(Boolean)
-        : undefined,
+    image: r.coverImage ? [r.coverImage] : undefined,
     url: restaurantUrl,
     telephone: r.phone || undefined,
     email: r.email || undefined,
@@ -217,7 +172,6 @@ export function buildRestaurantJsonLd({
       addressCountry: "PK",
     },
     acceptsReservations: Boolean(r.bookingSettings?.isBookingEnabled),
-    hasMenu: { "@id": `${restaurantUrl}#menu` },
     amenityFeature: amenityFeature.length > 0 ? amenityFeature : undefined,
     contactPoint: {
       "@type": "ContactPoint",
@@ -291,7 +245,7 @@ export function buildRestaurantJsonLd({
     ],
   };
 
-  const graph = [restaurantWebPageSchema, restaurantSchema, breadcrumbSchema, menuSchema];
+  const graph = [restaurantWebPageSchema, restaurantSchema, breadcrumbSchema];
   if (faqSchema.mainEntity.length > 0) graph.push(faqSchema);
 
   return {

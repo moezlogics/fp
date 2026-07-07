@@ -790,14 +790,14 @@ type TabId = "menu" | "deals" | "about" | "reviews" | "tour";
 interface TabContentProps {
     restaurant: any;
     aboutSlot?: ReactNode;
+    faqsSlot?: ReactNode;
     deals: any[];
     otherBranches: any[];
-    faqs: { question: string; answer: string }[];
     hasMenu?: boolean;
     restaurantId: string;
 }
 
-export function RestaurantTabs({ restaurant, aboutSlot, deals, otherBranches, faqs, hasMenu = true, restaurantId }: TabContentProps) {
+export function RestaurantTabs({ restaurant, aboutSlot, faqsSlot, deals, otherBranches, hasMenu = true, restaurantId }: TabContentProps) {
     const [activeTab, setActiveTab] = useState<TabId>(hasMenu ? "menu" : "deals");
     const [showTourFullscreen, setShowTourFullscreen] = useState(false);
     const r = restaurant;
@@ -936,12 +936,8 @@ export function RestaurantTabs({ restaurant, aboutSlot, deals, otherBranches, fa
 
                 <section id="section-about" className="scroll-mt-[130px]">
                     <AboutTab restaurant={r} otherBranches={otherBranches} aboutSlot={aboutSlot} />
-                    
-                    {faqs?.length > 0 && (
-                        <div className="mt-6">
-                            <RestaurantFaqs faqs={faqs} restaurantName={r.brandName || r.name} />
-                        </div>
-                    )}
+
+                    {faqsSlot}
                 </section>
 
                 <section id="section-reviews" className="scroll-mt-[130px]">

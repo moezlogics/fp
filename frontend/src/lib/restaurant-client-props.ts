@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
 import {
   slimBranchesForClient,
   slimDealsForClient,
   slimGalleryImages,
-  slimRestaurantForClient,
+  slimRestaurantForHeader,
+  slimRestaurantForTabs,
   slimSimilarForClient,
 } from "@/lib/slim-restaurant";
 
@@ -38,21 +38,15 @@ export function buildRestaurantClientProps({
     (h: any) => h.day?.toLowerCase() === currentDayStr,
   );
 
-  const faqs = buildRestaurantFaqs({
-    restaurant: r,
-    deals: deals || [],
-    otherBranches: otherBranches || [],
-  });
-
   return {
     city,
     slug,
     restaurantId: String(r._id),
-    restaurant: slimRestaurantForClient(r),
+    header: slimRestaurantForHeader(r),
+    tabRestaurant: slimRestaurantForTabs(r),
     deals: slimDealsForClient(deals || []),
     otherBranches: slimBranchesForClient(otherBranches || []),
     similarRestaurants: slimSimilarForClient(similarRestaurants || []),
-    faqs,
     galleryImages: slimGalleryImages(r.galleryImages || []),
     hasMenu,
     todayTiming: todayTiming
@@ -63,4 +57,4 @@ export function buildRestaurantClientProps({
   };
 }
 
-export type RestaurantClientProps = ReturnType<typeof buildRestaurantClientProps>;
+export type RestaurantPageClientProps = ReturnType<typeof buildRestaurantClientProps>;
