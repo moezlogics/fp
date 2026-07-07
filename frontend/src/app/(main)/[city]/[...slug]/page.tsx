@@ -10,7 +10,6 @@ import VirtualTourView from "./virtual-tour-view";
 
 interface Props {
   params: Promise<{ city: string; slug: string[] }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://foodiespakistan.pk";
@@ -97,14 +96,8 @@ async function fetchArchiveData(city: string, slug: string[]) {
 
 export async function generateMetadata({
   params,
-  searchParams,
 }: Props): Promise<Metadata> {
   const { city, slug } = await params;
-  const sp = (searchParams ? await searchParams : {}) as Record<
-    string,
-    string | string[] | undefined
-  >;
-  const pageQuery = sp.page && Number(sp.page) > 1 ? `?page=${sp.page}` : "";
   const settings = await getPublicSiteSettings(300);
   const siteName = settings.siteName || "Foodies Pakistan";
 
@@ -193,7 +186,7 @@ export async function generateMetadata({
     const cityName = cityDoc.name;
 
     if (mode === "combo" && category && area) {
-      const canonical = `${SITE_URL}/${city}/${area.slug || slug[0]}/${category.slug || slug[1]}/${pageQuery}`;
+      const canonical = `${SITE_URL}/${city}/${area.slug || slug[0]}/${category.slug || slug[1]}/`;
 
       const archiveRestaurants = data.restaurants || data.docs || [];
       // SEO: prevent soft 404. If NO restaurants exist for this area+category combo,
@@ -240,7 +233,7 @@ export async function generateMetadata({
 
     const displayName = category ? category.name : area?.name || slug[0];
     const isAreaOnly = !category && !!area;
-    const canonical = `${SITE_URL}/${city}/${slug[0]}/${pageQuery}`;
+    const canonical = `${SITE_URL}/${city}/${slug[0]}/`;
 
     const tagRestaurants = data.restaurants || data.docs || [];
     // SEO: prevent soft 404. Require at least 1 restaurant to render the page.

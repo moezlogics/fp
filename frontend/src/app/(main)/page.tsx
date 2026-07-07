@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
 import { HeroSlider } from "@/components/ui/hero-slider";
-import { cookies } from "next/headers";
 import { apiClient } from "@/lib/api-client";
 import { HomepageCards } from "@/components/home/homepage-cards";
 import { HomeContent } from "@/components/home/home-content";
@@ -28,8 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
-  const userCitySlug = cookieStore.get("foodies_city")?.value || "lahore";
+  // Static default for ISR — AppHeader hydrates the user's city from cookies
+  // client-side; home shell uses Lahore until the user changes city + refreshes.
+  const userCitySlug = "lahore";
   const siteSettings = await getPublicSiteSettings(60);
 
   let city: any = null,
@@ -279,6 +279,7 @@ export default async function HomePage() {
             <Link
               className="text-xs font-bold text-primary hover:underline"
               href={`/${userCitySlug}/`}
+              data-route-type="archive"
             >
               See All
             </Link>
@@ -313,6 +314,7 @@ export default async function HomePage() {
             <Link
               className="text-xs font-bold text-primary hover:underline"
               href={`/${userCitySlug}/`}
+              data-route-type="archive"
             >
               See All
             </Link>

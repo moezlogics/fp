@@ -1,10 +1,6 @@
-import { cookies } from "next/headers";
 import { AppHeader } from "@/components/ui-shell/app-header";
 import { BottomNav } from "@/components/ui-shell/bottom-nav";
 import { AppFooter } from "@/components/ui-shell/footer";
-import { ReviewPopup } from "@/components/review-popup";
-import { ReviewSchema } from "@/components/review-schema";
-import { PrimePopup } from "@/components/prime-popup";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
 
 export default async function RootShellLayout({
@@ -12,14 +8,11 @@ export default async function RootShellLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Server-side cookie read â€” prevents FOUC (Flash of Unstyled Content)
-  const cookieStore = await cookies();
-  const citySlug = cookieStore.get("foodies_city")?.value || "lahore";
-  const cityName = cookieStore.get("foodies_city_name")?.value
-    ? decodeURIComponent(cookieStore.get("foodies_city_name")!.value)
-    : "Lahore";
+  // Cookie-free layout — reading cookies() forced `private, no-store` on every
+  // page and broke ISR/CDN cache. City hydrates client-side in AppHeader.
+  const citySlug = "lahore";
+  const cityName = "Lahore";
 
-  // Fetch branding server-side â€” prevents logo flash
   const branding = await getPublicSiteSettings(300);
   const initialBranding = {
     logoUrl: branding.logoUrl || "",
@@ -41,9 +34,6 @@ export default async function RootShellLayout({
       <main className="flex-1 w-full">{children}</main>
       <AppFooter siteName={initialBranding.siteName} tagline={initialBranding.tagline} />
       <BottomNav />
-      {/* <ReviewPopup /> */}
-      {/* <PrimePopup /> */}
     </div>
   );
 }
-

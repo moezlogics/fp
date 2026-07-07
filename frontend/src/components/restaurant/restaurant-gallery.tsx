@@ -31,6 +31,7 @@ interface RestaurantGalleryProps {
     isPrimePartner?: boolean;
     isVerifiedPartner?: boolean;
     isFeatured?: boolean;
+    coverPriority?: boolean;
 }
 
 const CATEGORIES = ["All", "Food", "Interior", "Vibes", "Location"] as const;
@@ -47,6 +48,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 /* ─────────── Component ─────────── */
 export function RestaurantGallery({
     restaurantId, coverImage, coverImageAlt, galleryImages, restaurantName, restaurantSlug, videoUrl, discountLabel, isPrimePartner, isVerifiedPartner, isFeatured,
+    coverPriority = true,
 }: RestaurantGalleryProps) {
     const { data: session } = useSession();
     const { openAuthModal } = useAuthModal();
@@ -125,6 +127,10 @@ export function RestaurantGallery({
     }, []);
 
     useEffect(() => {
+        document.getElementById("restaurant-lcp-cover")?.classList.add("hidden");
+    }, []);
+
+    useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (shareRef.current && !shareRef.current.contains(e.target as Node)) setShareOpen(false);
         };
@@ -151,7 +157,7 @@ export function RestaurantGallery({
                     setLbIndex(0); // It's the first image in any filtered list because it's first in normalized
                 }}>
                 <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName} - Main Entrance`} fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 66vw, 50vw" priority quality={85} />
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(max-width: 768px) 66vw, 50vw" priority={coverPriority} quality={85} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
             </div>
 
@@ -211,7 +217,7 @@ export function RestaurantGallery({
                     setLbIndex(0);
                 }}>
                 <Image src={normalizedImages[0].url || "/placeholder.jpg"} alt={normalizedImages[0].altText || `${restaurantName}`} fill
-                    className="object-cover" sizes="(max-width: 768px) 66vw, 50vw" priority quality={85} />
+                    className="object-cover" sizes="(max-width: 768px) 66vw, 50vw" priority={coverPriority} quality={85} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </div>
 

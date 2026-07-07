@@ -145,10 +145,10 @@ export default function ArchiveView({
         <div className="max-w-7xl mx-auto px-2.5 md:px-4 pt-4 pb-2">
           <nav className="text-[10px] text-gray-400 flex items-center gap-1 mb-1 flex-wrap">
             <Link href="/" className="hover:text-primary">Home</Link><span>/</span>
-            <Link href={`/${city}/`} className="hover:text-primary capitalize">{cityName}</Link>
+            <Link href={`/${city}/`} data-route-type="archive" className="hover:text-primary capitalize">{cityName}</Link>
             {isCombo ? (
               <>
-                <span>/</span><Link href={`/${city}/${slug[0]}/`} className="hover:text-primary">{area.name}</Link>
+                <span>/</span><Link href={`/${city}/${slug[0]}/`} data-route-type="archive" className="hover:text-primary">{area.name}</Link>
                 <span>/</span><span className="text-gray-600 font-medium">{category.name}</span>
               </>
             ) : (
