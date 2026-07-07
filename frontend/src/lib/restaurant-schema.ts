@@ -168,21 +168,25 @@ export function buildRestaurantJsonLd({
     name: `${r.name} Digital Menu`,
     mainEntityOfPage: restaurantUrl,
     inLanguage: "en-PK",
-    hasMenuSection: Array.from(categoriesMap.entries()).map(([catName, items]) => ({
-      "@type": "MenuSection",
-      name: catName,
-      hasMenuItem: items.map((item: any) => ({
-        "@type": "MenuItem",
-        name: item.name,
-        description: stripHtml(item.description || `${item.name} served at ${r.name}`),
-        image: item.image || undefined,
-        offers: {
-          "@type": "Offer",
-          price: Number(item.price || 0),
-          priceCurrency: "PKR",
-        },
+    hasMenuSection: Array.from(categoriesMap.entries())
+      .slice(0, 12)
+      .map(([catName, items]) => ({
+        "@type": "MenuSection",
+        name: catName,
+        hasMenuItem: items.slice(0, 8).map((item: any) => ({
+          "@type": "MenuItem",
+          name: item.name,
+          ...(item.description
+            ? { description: stripHtml(item.description).slice(0, 160) }
+            : {}),
+          ...(item.image ? { image: item.image } : {}),
+          offers: {
+            "@type": "Offer",
+            price: Number(item.price || 0),
+            priceCurrency: "PKR",
+          },
+        })),
       })),
-    })),
   };
 
   const restaurantWebPageSchema = {

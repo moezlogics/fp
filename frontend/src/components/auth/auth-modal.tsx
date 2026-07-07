@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, createContext, useContext, useCallback } from "react";
+import { useState, useEffect, useRef, createContext, useContext, useCallback, Suspense } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,6 +26,14 @@ const AuthModalContext = createContext<AuthModalContextType>({
 export const useAuthModal = () => useContext(AuthModalContext);
 
 export function AuthModalProvider({ children }: { children: React.ReactNode }) {
+    return (
+        <Suspense fallback={null}>
+            <AuthModalProviderInner>{children}</AuthModalProviderInner>
+        </Suspense>
+    );
+}
+
+function AuthModalProviderInner({ children }: { children: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
     const [onSuccessCallback, setOnSuccessCallback] = useState<(() => void) | null>(null);
     const [sessionExpired, setSessionExpired] = useState(false);

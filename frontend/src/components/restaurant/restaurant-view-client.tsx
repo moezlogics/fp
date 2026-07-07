@@ -32,12 +32,12 @@ export default function RestaurantViewClient({
   slug,
   restaurantId,
   restaurant: r,
+  aboutHtml,
   deals,
-  reviews,
   otherBranches,
   similarRestaurants,
   faqs,
-  menuData,
+  galleryImages,
   hasMenu,
   todayTiming,
   hasVirtualTour,
@@ -55,7 +55,7 @@ export default function RestaurantViewClient({
           restaurantName={r.name}
           coverImage={r.coverImage}
           coverImageAlt={r.coverImageAlt}
-          galleryImages={r.galleryImages || []}
+          galleryImages={galleryImages}
           videoUrl={r.videoUrl}
           discountLabel={r.discountLabel}
           isPrimePartner={r.bookingSettings?.isPrimePartner}
@@ -203,12 +203,12 @@ export default function RestaurantViewClient({
           <div className="lg:col-span-2 space-y-3 md:space-y-5 min-w-0 w-full overflow-hidden">
             <RestaurantTabs
               restaurant={r}
+              aboutHtml={aboutHtml}
               deals={deals}
-              reviews={reviews}
               otherBranches={otherBranches}
               faqs={faqs}
               hasMenu={hasMenu}
-              menuData={menuData}
+              restaurantId={restaurantId}
             />
 
             <div id="booking-mobile" className="block lg:hidden pt-4 pb-2">

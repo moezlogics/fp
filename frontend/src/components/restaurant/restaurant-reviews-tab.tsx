@@ -131,17 +131,35 @@ function ReviewPhotoGrid({
     );
 }
 
-export function RestaurantReviewsTab({ reviews, restaurant }: { reviews: any[]; restaurant: any }) {
+export function RestaurantReviewsTab({ restaurant }: { restaurant: any }) {
     const { data: session } = useSession();
     const router = useRouter();
     const [showReviewModal, setShowReviewModal] = useState(false);
-    const [localReviews, setLocalReviews] = useState(reviews);
+    const [localReviews, setLocalReviews] = useState<any[]>([]);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
     const [replyDrafts, setReplyDrafts] = useState<Record<string, ReplyDraft>>({});
     const [replyLoadingId, setReplyLoadingId] = useState<string | null>(null);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [lightboxSlides, setLightboxSlides] = useState<{ src: string }[]>([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        setReviewsLoading(true);
+        fetch(`/api/reviews?restaurantId=${restaurant._id}`)
+            .then((res) => res.json())
+            .then((data) => {
+                if (!cancelled && data.reviews) setLocalReviews(data.reviews);
+            })
+            .catch(() => {})
+            .finally(() => {
+                if (!cancelled) setReviewsLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [restaurant._id]);
 
     const handleReviewSubmitted = async () => {
         try {

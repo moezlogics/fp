@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
-
-/** One-pass plain serialization for RSC → client props (replaces triple JSON.parse). */
-function toPlain<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
+import {
+  slimBranchesForClient,
+  slimDealsForClient,
+  slimGalleryImages,
+  slimRestaurantForClient,
+  slimSimilarForClient,
+} from "@/lib/slim-restaurant";
 
 export function buildRestaurantClientProps({
   city,
@@ -15,14 +17,8 @@ export function buildRestaurantClientProps({
   slug: string;
   payload: any;
 }) {
-  const {
-    restaurant: r,
-    reviews,
-    deals,
-    otherBranches,
-    similarRestaurants,
-    menuItems,
-  } = payload;
+  const { restaurant: r, deals, otherBranches, similarRestaurants, menuItems } =
+    payload;
 
   const menuItemsRaw = Array.isArray(menuItems)
     ? menuItems
@@ -35,12 +31,6 @@ export function buildRestaurantClientProps({
       (img: any) => img && typeof img === "string" && img.trim() !== "",
     ).length || 0) > 0 || (menuItemsRaw?.length || 0) > 0;
 
-  const faqs = buildRestaurantFaqs({
-    restaurant: r,
-    deals: deals || [],
-    otherBranches: otherBranches || [],
-  });
-
   const currentDayStr = new Date()
     .toLocaleString("en-US", { weekday: "long", timeZone: "Asia/Karachi" })
     .toLowerCase();
@@ -48,21 +38,30 @@ export function buildRestaurantClientProps({
     (h: any) => h.day?.toLowerCase() === currentDayStr,
   );
 
+  const faqs = buildRestaurantFaqs({
+    restaurant: r,
+    deals: deals || [],
+    otherBranches: otherBranches || [],
+  });
+
   return {
     city,
     slug,
     restaurantId: String(r._id),
-    restaurant: toPlain(r),
-    deals: toPlain(deals || []),
-    reviews: toPlain(reviews || []),
-    otherBranches: toPlain(otherBranches || []),
-    similarRestaurants: toPlain(similarRestaurants || []),
-    faqs: toPlain(faqs),
-    menuData: toPlain(menuItems),
+    restaurant: slimRestaurantForClient(r),
+    aboutHtml: r.description || "",
+    deals: slimDealsForClient(deals || []),
+    otherBranches: slimBranchesForClient(otherBranches || []),
+    similarRestaurants: slimSimilarForClient(similarRestaurants || []),
+    faqs,
+    galleryImages: slimGalleryImages(r.galleryImages || []),
     hasMenu,
-    todayTiming: todayTiming ? toPlain(todayTiming) : null,
+    todayTiming: todayTiming
+      ? { day: todayTiming.day, open: todayTiming.open, close: todayTiming.close, isClosed: todayTiming.isClosed }
+      : null,
     hasVirtualTour:
       (r.virtualTour?.scenes?.length || 0) > 0 && r.virtualTour?.status === "published",
+    // Menu + reviews are NOT passed — fetched client-side to keep RSC payload small
   };
 }
 

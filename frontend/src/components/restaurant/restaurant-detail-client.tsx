@@ -789,19 +789,19 @@ type TabId = "menu" | "deals" | "about" | "reviews" | "tour";
 
 interface TabContentProps {
     restaurant: any;
+    aboutHtml?: string;
     deals: any[];
-    reviews: any[];
     otherBranches: any[];
     faqs: { question: string; answer: string }[];
     hasMenu?: boolean;
-    menuData?: any;
+    restaurantId: string;
 }
 
-export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs, hasMenu = true, menuData }: TabContentProps) {
+export function RestaurantTabs({ restaurant, aboutHtml, deals, otherBranches, faqs, hasMenu = true, restaurantId }: TabContentProps) {
     const [activeTab, setActiveTab] = useState<TabId>(hasMenu ? "menu" : "deals");
     const [showTourFullscreen, setShowTourFullscreen] = useState(false);
     const r = restaurant;
-    const hasTour = r.virtualTour?.status === "published" && r.virtualTour?.scenes?.length > 0;
+    const hasTour = r.virtualTour?.status === "published" && (r.virtualTour?.sceneCount > 0);
     const VR_TOUR_APP_URL = process.env.NEXT_PUBLIC_VR_TOUR_APP_URL || "http://localhost:8500";
 
     // Scroll Spy & Custom Events
@@ -914,7 +914,7 @@ export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs
             <div className="flex flex-col gap-5">
                 {hasMenu && (
                     <section id="section-menu" className="scroll-mt-[130px]">
-                        <MenuTab restaurant={r} menuData={menuData} />
+                        <MenuTab restaurant={r} restaurantId={restaurantId} />
                     </section>
                 )}
 
@@ -935,7 +935,7 @@ export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs
                 )}
 
                 <section id="section-about" className="scroll-mt-[130px]">
-                    <AboutTab restaurant={r} otherBranches={otherBranches} />
+                    <AboutTab restaurant={r} otherBranches={otherBranches} aboutHtml={aboutHtml} />
                     
                     {faqs?.length > 0 && (
                         <div className="mt-6">
@@ -945,7 +945,7 @@ export function RestaurantTabs({ restaurant, deals, reviews, otherBranches, faqs
                 </section>
 
                 <section id="section-reviews" className="scroll-mt-[130px]">
-                    <RestaurantReviewsTab reviews={reviews} restaurant={r} />
+                    <RestaurantReviewsTab restaurant={r} />
                 </section>
             </div>
         </div>
@@ -1043,16 +1043,26 @@ function DealsTab({ deals }: { deals: any[]; restaurant: any }) {
 }
 
 /* ─── MENU TAB ─── */
-function MenuTab({ restaurant, menuData }: { restaurant: any; menuData?: any }) {
+function MenuTab({ restaurant, restaurantId }: { restaurant: any; restaurantId: string }) {
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIdx, setLightboxIdx] = useState(0);
     const sliderRef = useRef<HTMLDivElement>(null);
 
     const images: string[] = restaurant.menuImages || [];
 
-    if (images.length === 0 && (!restaurant?.menuItems || restaurant.menuItems.length === 0)) {
-        // This case is usually handled by hasMenu on the parent, but as a failsafe:
-        return null;
+    if (images.length === 0) {
+        return (
+            <div className="bg-white rounded-2xl border border-gray-250 p-4 sm:p-6 shadow-md space-y-6">
+                <h2 className="text-base md:text-lg font-black text-black border-b border-gray-100 pb-2 flex items-center gap-2">
+                    <UtensilsCrossed className="w-5 h-5 text-primary" /> Complete Menu
+                </h2>
+                <RestaurantMenu
+                    restaurantId={restaurantId}
+                    restaurantName={restaurant.brandName || restaurant.name}
+                    isInitiallyCompact={true}
+                />
+            </div>
+        );
     }
 
     const scrollLeft = () => {
@@ -1116,11 +1126,10 @@ function MenuTab({ restaurant, menuData }: { restaurant: any; menuData?: any }) 
                     <UtensilsCrossed className="w-5 h-5 text-primary" /> Complete Menu
                 </h2>
                 <p className="text-[11px] text-zinc-950 font-bold mb-3 mt-1">Browse all dishes with prices — search, filter by category</p>
-                <RestaurantMenu 
-                    restaurantId={restaurant._id} 
-                    restaurantName={restaurant.brandName || restaurant.name} 
+                <RestaurantMenu
+                    restaurantId={restaurantId}
+                    restaurantName={restaurant.brandName || restaurant.name}
                     isInitiallyCompact={true}
-                    initialData={menuData}
                 />
             </div>
 
@@ -1154,7 +1163,7 @@ function MenuTab({ restaurant, menuData }: { restaurant: any; menuData?: any }) 
 
 
 /* ─── ABOUT TAB ─── */
-function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranches: any[] }) {
+function AboutTab({ restaurant, otherBranches, aboutHtml }: { restaurant: any; otherBranches: any[]; aboutHtml?: string }) {
     const r = restaurant;
 
     return (
@@ -1163,13 +1172,12 @@ function AboutTab({ restaurant, otherBranches }: { restaurant: any; otherBranche
                 <Info className="w-5 h-5 text-primary" /> About & Venue Details
             </h2>
 
-            {/* Owner Description */}
-            {r.description && (
+            {aboutHtml && (
                 <div className="space-y-2 w-full min-w-0">
                     <h3 className="text-sm font-black text-black">About {r.brandName || r.name}</h3>
-                    <div 
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(r.description) }} 
-                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_table]:overflow-x-auto [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 font-bold description-text" 
+                    <div
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aboutHtml) }}
+                        className="prose prose-sm max-w-none text-[13px] md:text-sm text-zinc-950 leading-relaxed [&_p]:mb-3 [&_p]:last:mb-0 [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_table]:max-w-full [&_table]:overflow-x-auto [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 font-bold description-text"
                     />
                 </div>
             )}
