@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
 
-import { buildRestaurantSeoDescription, buildRestaurantSeoTitle } from "@/lib/restaurant-seo";
+import { buildRestaurantSeoTitle } from "@/lib/restaurant-seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://foodiespakistan.pk";
 
