@@ -7,7 +7,7 @@ import { apiClient } from "@/lib/api-client";
 import { ArchiveMapToggle } from "@/components/archive/archive-map-toggle";
 import { DealsFilterSidebar } from "@/components/archive/deals-filter-sidebar";
 import { MobileDealsControls } from "@/components/archive/mobile-deals-controls";
-import FaqSection from "@/components/ui/faq-section";
+
 import {
   buildDealsFilterQuery,
   buildBankDealCounts,
@@ -152,48 +152,6 @@ export default async function CityDealsPage({ params, searchParams }: Props) {
   const pageUrl = `${SITE_URL}/${citySlug}/deals/`;
   const pageTitle = `Best Bank Card Deals & Discounts in ${cityName}`;
 
-  const faqs: { question: string; answer: string }[] = [];
-  if (groupedDeals.length > 0) {
-    const topRestaurants = groupedDeals
-      .slice(0, 3)
-      .map((entry) => entry.restaurant?.brandName || entry.restaurant?.name)
-      .filter(Boolean);
-    const activeBanks = banks
-      .filter((bank: any) => (bankDealCounts[String(bank?._id)] || 0) > 0)
-      .slice(0, 4)
-      .map((bank: any) => bank.name)
-      .filter(Boolean);
-
-    faqs.push({
-      question: `Which restaurants have the best bank card deals in ${cityName}?`,
-      answer: topRestaurants.length > 0
-        ? `Currently, some of the top-rated restaurants offering bank card deals in ${cityName} include ${topRestaurants.join(", ")}. You can get up to 50% flat discount on dine-in.`
-        : `Various premium restaurants in ${cityName} offer up to 50% discount on partner bank cards. Check our live directory to see today's active offers.`,
-    });
-
-    faqs.push({
-      question: `Which banks offer dining discounts in ${cityName}?`,
-      answer: activeBanks.length > 0
-        ? `Major banks including ${activeBanks.join(", ")} offer exclusive dining discounts across ${cityName}. These deals apply to debit and credit cards depending on your card tier.`
-        : `Most major banks like HBL, Meezan, UBL, and Alfalah offer dining discounts in ${cityName}. Deals usually range from 15% to 50% off on credit and debit cards.`,
-    });
-
-    faqs.push({
-      question: `How do I claim a restaurant bank discount in ${cityName}?`,
-      answer: `To claim a bank discount, simply visit the restaurant, let them know you will be paying with your partner bank card, and the discount (e.g., 20% or 40% OFF) will be applied directly to your final bill.`,
-    });
-
-    faqs.push({
-      question: `Do I need to book a table to get bank bank deals?`,
-      answer: `While walk-ins are accepted, we highly recommend booking your table online through Foodies Pakistan, especially for popular spots in ${cityName}. Booking secures your table and guarantees your bank discount eligibility without waiting in line.`,
-    });
-
-    faqs.push({
-      question: `Can I stack multiple discounts at ${cityName} restaurants?`,
-      answer: `Generally, bank card deals cannot be stacked with other ongoing restaurant promotions or Prime subscriptions. The restaurant will apply the single highest discount available to you at checkout.`,
-    });
-  }
-
   const collectionPageSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -244,25 +202,7 @@ export default async function CityDealsPage({ params, searchParams }: Props) {
     ],
   };
 
-  const faqSchema =
-    faqs.length > 0
-      ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${pageUrl}#faq`,
-        mainEntity: faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        })),
-      }
-      : null;
-
   const schemas: any[] = [collectionPageSchema, itemListSchema, breadcrumbSchema];
-  if (faqSchema) schemas.push(faqSchema);
 
   return (
     <>
@@ -460,18 +400,6 @@ export default async function CityDealsPage({ params, searchParams }: Props) {
             )}
           </div>
         </div>
-
-        {faqs.length > 0 && (
-          <div className="max-w-7xl mx-auto px-2.5 md:px-4 pb-6">
-            <FaqSection
-              faqs={faqs}
-              eyebrow="Common Questions"
-              title={`People also ask about bank deals in ${cityName}`}
-              description={`Quick answers to the most common questions about credit and debit card dining discounts in ${cityName}.`}
-              className="mt-0"
-            />
-          </div>
-        )}
       </div>
     </>
   );

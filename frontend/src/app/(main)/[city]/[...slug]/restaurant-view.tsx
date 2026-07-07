@@ -1,9 +1,7 @@
 import { preload } from "react-dom";
-import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
 import { buildRestaurantJsonLd, serializeJsonLd } from "@/lib/restaurant-schema";
 import { buildRestaurantClientProps } from "@/lib/restaurant-client-props";
 import RestaurantAboutDescription from "@/components/restaurant/restaurant-about-description";
-import RestaurantFaqsServer from "@/components/restaurant/restaurant-faqs-server";
 import RestaurantPageClient from "@/components/restaurant/restaurant-page-client";
 
 export default function RestaurantDetailView({
@@ -19,11 +17,6 @@ export default function RestaurantDetailView({
   const r = payload.restaurant;
   const jsonLd = buildRestaurantJsonLd({ city, slug, payload });
   const clientProps = buildRestaurantClientProps({ city, slug, payload });
-  const faqs = buildRestaurantFaqs({
-    restaurant: r,
-    deals: payload.deals || [],
-    otherBranches: payload.otherBranches || [],
-  });
 
   if (r.coverImage) {
     preload(r.coverImage, { as: "image", fetchPriority: "high" });
@@ -37,11 +30,6 @@ export default function RestaurantDetailView({
     />
   ) : null;
 
-  const faqsSlot =
-    faqs.length > 0 ? (
-      <RestaurantFaqsServer faqs={faqs} restaurantName={r.brandName || r.name} />
-    ) : null;
-
   return (
     <>
       <script
@@ -51,7 +39,6 @@ export default function RestaurantDetailView({
       <RestaurantPageClient
         {...clientProps}
         aboutSlot={aboutSlot}
-        faqsSlot={faqsSlot}
       />
     </>
   );

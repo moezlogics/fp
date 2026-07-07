@@ -421,13 +421,21 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
 
                             {/* Right: Search + Menu */}
                             <div className="flex items-center gap-0.5 shrink-0">
-                                <button onClick={() => { setSearchOpen(!searchOpen); setMobileMenu(false); }}
+                                <button
+                                    type="button"
+                                    aria-label="Search restaurants"
+                                    aria-expanded={searchOpen}
+                                    onClick={() => { setSearchOpen(!searchOpen); setMobileMenu(false); }}
                                     className="p-1.5 text-gray-600 hover:bg-gray-50 rounded-full transition">
-                                    <Search className="w-4.5 h-4.5" />
+                                    <Search className="w-4.5 h-4.5" aria-hidden="true" />
                                 </button>
-                                <button onClick={() => { setMobileMenu(!mobileMenu); setSearchOpen(false); }}
+                                <button
+                                    type="button"
+                                    aria-label={mobileMenu ? "Close menu" : "Open menu"}
+                                    aria-expanded={mobileMenu}
+                                    onClick={() => { setMobileMenu(!mobileMenu); setSearchOpen(false); }}
                                     className="p-1.5 text-gray-600 hover:bg-gray-50 rounded-full transition">
-                                    {mobileMenu ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}
+                                    {mobileMenu ? <X className="w-4.5 h-4.5" aria-hidden="true" /> : <Menu className="w-4.5 h-4.5" aria-hidden="true" />}
                                 </button>
                             </div>
                         </div>
@@ -446,9 +454,12 @@ export function AppHeader({ initialCity = "Lahore", initialCitySlug = "lahore", 
                                     placeholder="Search restaurants, cuisines..."
                                     className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                                 />
-                                <button onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                                <button
+                                    type="button"
+                                    aria-label="Close search"
+                                    onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                    <X className="w-4 h-4" />
+                                    <X className="w-4 h-4" aria-hidden="true" />
                                 </button>
                             </div>
                             {searchResults.length > 0 && (

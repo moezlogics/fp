@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -45,20 +45,51 @@ function createLogoIcon(logoUrl?: string): L.DivIcon | L.Icon {
 function FitBounds({ restaurants }: { restaurants: any[] }) {
     const map = useMap();
 
-    useEffect(() => {
-        if (restaurants.length === 0) return;
+    // Serialize coordinates and ids to form a stable dependency key
+    const depKey = restaurants.map((r) => `${r.id}-${r.lat}-${r.lng}`).join(",");
 
-        if (restaurants.length === 1) {
-            map.setView([restaurants[0].lat, restaurants[0].lng], 16, { animate: true });
-        } else {
-            const bounds = L.latLngBounds(
-                restaurants.map((r) => [r.lat, r.lng])
-            );
-            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: true });
-        }
-    }, [restaurants, map]);
+    useEffect(() => {
+        // If there is 0 or 1 restaurant, initialCenter and initialZoom on MapContainer
+        // already handles centering. Running map.setView or map.fitBounds causes
+        // leaflet to pan/animate on mount/re-renders, which causes page jittering
+        // and loading tiles twice.
+        if (restaurants.length <= 1) return;
+
+        const bounds = L.latLngBounds(
+            restaurants.map((r) => [r.lat, r.lng])
+        );
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: false });
+    }, [depKey, map]);
 
     return null;
+}
+
+function RestaurantMarker({ restaurant }: { restaurant: MapRestaurant }) {
+    const markerRef = useRef<L.Marker>(null);
+
+    useEffect(() => {
+        const el = markerRef.current?.getElement();
+        if (el) {
+            el.setAttribute("aria-label", `${restaurant.name} location on map`);
+        }
+    }, [restaurant.name]);
+
+    return (
+        <Marker
+            ref={markerRef}
+            position={[restaurant.lat, restaurant.lng]}
+            icon={createLogoIcon(restaurant.logo)}
+        >
+            <Popup>
+                <div style={{ padding: 12, textAlign: "center" }}>
+                    <p style={{ fontWeight: 900, fontSize: 13, color: "#111827", margin: 0 }}>{restaurant.name}</p>
+                    {restaurant.category && (
+                        <p style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>{restaurant.category}</p>
+                    )}
+                </div>
+            </Popup>
+        </Marker>
+    );
 }
 
 interface MapRestaurant {
@@ -95,16 +126,7 @@ export default function MapView({ restaurants }: { restaurants: MapRestaurant[] 
                 />
                 <FitBounds restaurants={restaurants} />
                 {restaurants.map((r) => (
-                    <Marker key={r.id} position={[r.lat, r.lng]} icon={createLogoIcon(r.logo)}>
-                        <Popup>
-                            <div style={{ padding: 12, textAlign: "center" }}>
-                                <p style={{ fontWeight: 900, fontSize: 13, color: "#111827", margin: 0 }}>{r.name}</p>
-                                {r.category && (
-                                    <p style={{ fontSize: 11, color: "#6b7280", marginTop: 4 }}>{r.category}</p>
-                                )}
-                            </div>
-                        </Popup>
-                    </Marker>
+                    <RestaurantMarker key={r.id} restaurant={r} />
                 ))}
             </MapContainer>
         </>

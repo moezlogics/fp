@@ -7,7 +7,6 @@ import { ArchiveMapToggle } from "@/components/archive/archive-map-toggle";
 import { MobileArchiveControls } from "@/components/archive/mobile-archive-controls";
 import { apiClient } from "@/lib/api-client";
 import { notFound } from "next/navigation";
-import FaqSection from "@/components/ui/faq-section";
 import { getPublicSiteSettings, withSiteName } from "@/lib/public-site-settings";
 
 const INITIAL_PAGE_SIZE = 12;
@@ -237,61 +236,6 @@ export default async function CityArchivePage({
     }),
   };
 
-  const visibleFaqs: { question: string; answer: string }[] = [];
-
-  if (restaurants.length > 0 && !searchQuery) {
-    const topNames = restaurants.slice(0, 3).map((r: any) => r.name).join(", ");
-    const restaurantsWithDeals = restaurants.filter((r: any) => r.deals && r.deals.length > 0);
-    const dealNames = restaurantsWithDeals.slice(0, 2).map((r: any) => r.name).join(" and ");
-
-    visibleFaqs.push({
-      question: `Best restaurants in ${cityName} right now?`,
-      answer: `Based on verified reviews from real diners, some of the highest-rated restaurants in ${cityName} include ${topNames}. Browse all listings on ${siteName} to compare menus, ratings, and photos before you visit.`,
-    });
-
-    visibleFaqs.push({
-      question: `How to get restaurant deals in ${cityName} with bank cards?`,
-      answer: `Many restaurants in ${cityName} offer exclusive discounts of up to 50% off when you pay with partner bank cards like HBL, UBL, MCB, Meezan, and more.${dealNames ? ` For example, ${dealNames} currently have active bank card deals.` : ""} Check each restaurant's profile on ${siteName} to see which card discounts are available today.`,
-    });
-
-    visibleFaqs.push({
-      question: `Can I book a table online in ${cityName}?`,
-      answer: `Yes, you can reserve a table at top restaurants in ${cityName} directly through ${siteName}. Just select your preferred date, time, and party size — your booking is confirmed instantly without needing to call the restaurant.`,
-    });
-
-    visibleFaqs.push({
-      question: `Best restaurants for family dining in ${cityName}?`,
-      answer: `${cityName} has many family-friendly restaurants with spacious seating, kids menus, and dedicated family areas. Use the filters on ${siteName} to find restaurants that match your vibe — whether you're looking for a quiet family dinner or a lively weekend spot.`,
-    });
-
-    visibleFaqs.push({
-      question: `${cityName} famous food — where to eat?`,
-      answer: `${cityName} is known for its diverse food scene ranging from traditional Pakistani cuisine to international flavors. Explore the top-rated spots on ${siteName} to discover local favorites, hidden gems, and trending new openings across the city.`,
-    });
-
-    visibleFaqs.push({
-      question: `Are there any cheap eats or budget restaurants in ${cityName}?`,
-      answer: `Absolutely! ${cityName} has plenty of affordable dining options. On ${siteName}, you can filter by price range to find budget-friendly restaurants that still deliver great taste. Bank card deals can save you up to 50% off even at premium spots.`,
-    });
-  }
-
-  const faqSchema: any =
-    visibleFaqs.length > 0
-      ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${pageUrl}#faq`,
-        mainEntity: visibleFaqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        })),
-      }
-      : null;
-
   // ── Breadcrumb Schema ──
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -314,9 +258,6 @@ export default async function CityArchivePage({
   };
 
   const schemasToInject = [webPageSchema, itemListSchema, breadcrumbSchema];
-  if (faqSchema) {
-    schemasToInject.push(faqSchema);
-  }
 
   return (
     <>
@@ -388,18 +329,6 @@ export default async function CityArchivePage({
             />
           </div>
         </div>
-
-        {!searchQuery && visibleFaqs.length > 0 && (
-          <div className="max-w-7xl mx-auto px-2.5 md:px-4 pb-6">
-            <FaqSection
-              faqs={visibleFaqs}
-              eyebrow="Common Questions"
-              title={`People also ask about restaurants in ${cityName}`}
-              description={`Quick answers to the most common questions about dining, deals, and booking in ${cityName}.`}
-              className="mt-0"
-            />
-          </div>
-        )}
       </div>
     </>
   );

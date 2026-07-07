@@ -6,7 +6,6 @@ import { HeroSlider } from "@/components/ui/hero-slider";
 import { apiClient } from "@/lib/api-client";
 import { HomepageCards } from "@/components/home/homepage-cards";
 import { HomeContent } from "@/components/home/home-content";
-import FaqSection from "@/components/ui/faq-section";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { StoryFeed } from "@/components/stories/StoryFeed";
 
@@ -134,54 +133,6 @@ export default async function HomePage() {
     0,
     ...bankDeals.map((b: any) => b.maxDiscount || 0),
   );
-
-  const homepageFaqs = [
-    {
-      question: `What are the most popular restaurant cuisines in ${cityName}?`,
-      answer: popularCuisines
-        ? `Based on recent searches, the most popular cuisines in ${cityName} right now include ${popularCuisines}. You can explore menus, reviews, and deals for all these categories on ${siteName}.`
-        : `${siteName} features a vast directory of restaurants covering dozens of local and international cuisines across ${cityName}.`,
-    },
-    {
-      question: `Which areas in ${cityName} have the best restaurants?`,
-      answer: popularAreas
-        ? `If you are looking for top-rated dining, areas like ${popularAreas} are currently trending based on user reviews and featured spots.`
-        : `You can discover highly-rated restaurants across all major neighborhoods and food streets in ${cityName}.`,
-    },
-    {
-      question: `How can I find bank discounts and food deals in ${cityName}?`,
-      answer:
-        activeBanks && maxDiscountValue > 0
-          ? `${siteName} lists exclusive discounts up to ${maxDiscountValue}% OFF from partner banks including ${activeBanks}. You can browse all active deals directly on our platform before booking a table.`
-          : `We aggregate the latest bank card discounts and restaurant deals to help diners discover value before they book.`,
-    },
-    {
-      question: `Where can I find the highest-rated restaurants in ${cityName}?`,
-      answer:
-        topRatedRestaurants.length > 0
-          ? `Our community has highly rated ${topRatedRestaurants
-            .slice(0, 3)
-            .map((r: any) => r.name)
-            .join(
-              ", ",
-            )} as some of the top authenticated dining experiences in ${cityName}.`
-          : `${siteName} aggregates thousands of verified reviews to rank the deepest list of top-rated restaurants, cafes, and bakeries across ${cityName}.`,
-    },
-  ];
-
-  const faqSchema: any = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: homepageFaqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -200,7 +151,6 @@ export default async function HomePage() {
     breadcrumbSchema,
     ...(featuredListSchema ? [featuredListSchema] : []),
     ...(bestOfListSchema ? [bestOfListSchema] : []),
-    faqSchema,
   ];
 
   return (
@@ -445,13 +395,6 @@ export default async function HomePage() {
             .replace(/<\/h1>/g, "</h2>")}
         />
       )}
-
-      <FaqSection
-        faqs={homepageFaqs}
-        eyebrow="Helpful Answers"
-        title="FAQs"
-        description=""
-      />
     </div>
   );
 }

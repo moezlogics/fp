@@ -5,7 +5,6 @@ import { FilterSidebar } from "@/components/archive/filter-sidebar";
 import { RestaurantGrid } from "@/components/archive/restaurant-grid";
 import { ArchiveMapToggle } from "@/components/archive/archive-map-toggle";
 import { MobileArchiveControls } from "@/components/archive/mobile-archive-controls";
-import FaqSection from "@/components/ui/faq-section";
 import DOMPurify from "isomorphic-dompurify";
 import { notFound } from "next/navigation";
 
@@ -88,34 +87,6 @@ export default function ArchiveView({
     }),
   };
 
-  const archiveFaqs: { question: string; answer: string }[] = [];
-
-  if (restaurants.length > 0) {
-    const topNames = restaurants.slice(0, 3).map((r: any) => r.name).join(", ");
-    const restaurantsWithDeals = restaurants.filter((r: any) => r.deals && r.deals.length > 0);
-    const dealNames = restaurantsWithDeals.slice(0, 2).map((r: any) => r.name).join(" and ");
-    const catLabel = isCombo ? `${category.name} restaurants in ${area.name}, ${cityName}` : `${displayName} restaurants in ${cityName}`;
-    const catLabelShort = isCombo ? `${category.name} in ${area.name}` : `${displayName} in ${cityName}`;
-
-    archiveFaqs.push({ question: `Best ${catLabelShort} right now?`, answer: `Based on verified diner reviews, some of the top-rated ${catLabelShort.toLowerCase()} include ${topNames}. Browse all listings on ${siteName} to compare menus, photos, and ratings before visiting.` });
-    archiveFaqs.push({ question: `How to get bank card deals at ${catLabelShort.toLowerCase()}?`, answer: `Many ${catLabelShort.toLowerCase()} offer exclusive discounts of up to 50% off when you pay with partner bank cards including HBL, UBL, MCB, Meezan, and more.${dealNames ? ` For example, ${dealNames} currently have active bank card deals.` : ""} Check each restaurant's profile on ${siteName} to see today's live offers.` });
-    archiveFaqs.push({ question: `Can I book a table online at ${catLabelShort.toLowerCase()}?`, answer: `Yes! You can reserve a table at ${catLabelShort.toLowerCase()} directly through ${siteName}. Select your date, time, and party size — your booking is confirmed instantly without any phone calls.` });
-    archiveFaqs.push({ question: `Best ${displayName.toLowerCase()} for family dining in ${cityName}?`, answer: `${cityName} has many family-friendly ${displayName.toLowerCase()} restaurants with spacious seating, kids menus, and comfortable ambiance. Use the filters on ${siteName} to find the perfect spot for your next family outing.` });
-    archiveFaqs.push({ question: `What is the price range for ${catLabelShort.toLowerCase()}?`, answer: `${catLabel} range from budget-friendly options to premium dining experiences. On ${siteName}, you can filter by price range to find restaurants that match your budget. Plus, bank card deals can save you up to 50% off even at higher-end spots.` });
-    archiveFaqs.push({ question: `Top rated ${displayName.toLowerCase()} with reviews in ${cityName}?`, answer: `All restaurants on ${siteName} have verified reviews from real diners. Currently, the highest-rated ${displayName.toLowerCase()} spots in ${cityName} include ${topNames}. Read detailed reviews, see ratings, and check photos before you book.` });
-  }
-
-  const faqSchema: any = archiveFaqs.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": `${archivePageUrl}#faq`,
-    mainEntity: archiveFaqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
-    })),
-  } : null;
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -133,7 +104,6 @@ export default function ArchiveView({
   };
 
   const schemasToInject = [collectionPageSchema, itemListSchema, breadcrumbSchema];
-  if (faqSchema) schemasToInject.push(faqSchema);
 
   return (
     <>
@@ -203,13 +173,7 @@ export default function ArchiveView({
               </div>
             )}
 
-            {archiveFaqs.length > 0 && (
-              <FaqSection
-                faqs={archiveFaqs} eyebrow="Common Questions"
-                title={`People also ask about ${displayName.toLowerCase()}${isCombo ? `, ${cityName}` : ` in ${cityName}`}`}
-                description={`Quick answers to the most common questions about ${displayName.toLowerCase()}, deals, and booking in ${cityName}.`}
-              />
-            )}
+
           </div>
         </div>
       </div>

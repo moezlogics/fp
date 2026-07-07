@@ -1,0 +1,33 @@
+# Foodies Pakistan
+
+> Foodies Pakistan is a restaurant discovery and table-booking platform for diners across Pakistan. Browse restaurants by city, view menus and deals, read reviews, and reserve tables online.
+
+## Main pages
+
+- [Home](https://foodiespakistan.pk/): Discover top restaurants, deals, and dining guides in Pakistan.
+- [About Us](https://foodiespakistan.pk/about-us): Mission, team, and how Foodies Pakistan works.
+- [Contact Us](https://foodiespakistan.pk/contact-us): Get in touch with the Foodies Pakistan team.
+- [Articles](https://foodiespakistan.pk/articles): Food and dining guides, tips, and editorial content.
+
+## Cities
+
+- [Lahore restaurants](https://foodiespakistan.pk/lahore/): Browse and book restaurants in Lahore.
+- [Karachi restaurants](https://foodiespakistan.pk/karachi/): Browse and book restaurants in Karachi.
+- [Islamabad restaurants](https://foodiespakistan.pk/islamabad/): Browse and book restaurants in Islamabad.
+
+## Deals & services
+
+- [Lahore deals](https://foodiespakistan.pk/lahore/deals/): Bank card and dining deals in Lahore.
+- [FoodiePrime](https://foodiespakistan.pk/prime/): Premium membership benefits for diners.
+- [Partner with us](https://foodiespakistan.pk/partner/): Information for restaurant owners and partners.
+
+## Policies
+
+- [Privacy Policy](https://foodiespakistan.pk/privacy-policy): How user data is collected and used.
+- [Terms & Conditions](https://foodiespakistan.pk/terms-conditions): Terms of use for the platform.
+- [Disclaimer](https://foodiespakistan.pk/disclaimer): Legal disclaimer and liability information.
+
+## Optional
+
+- [Sitemap index](https://foodiespakistan.pk/sitemap-index.xml): Full XML sitemap index for crawlers.
+- [Robots.txt](https://foodiespakistan.pk/robots.txt): Crawler access rules for AI and search bots.

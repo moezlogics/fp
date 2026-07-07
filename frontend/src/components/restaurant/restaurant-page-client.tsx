@@ -30,7 +30,6 @@ function to12h(t: string) {
 
 type Props = RestaurantPageClientProps & {
   aboutSlot?: ReactNode;
-  faqsSlot?: ReactNode;
 };
 
 export default function RestaurantPageClient({
@@ -47,7 +46,6 @@ export default function RestaurantPageClient({
   todayTiming,
   hasVirtualTour,
   aboutSlot,
-  faqsSlot,
 }: Props) {
   const r = header;
   const fullName =
@@ -184,7 +182,6 @@ export default function RestaurantPageClient({
             <RestaurantTabsIsland
               restaurant={tabRestaurant}
               aboutSlot={aboutSlot}
-              faqsSlot={faqsSlot}
               deals={deals}
               otherBranches={otherBranches}
               hasMenu={hasMenu}

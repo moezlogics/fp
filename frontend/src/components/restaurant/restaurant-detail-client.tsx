@@ -790,14 +790,13 @@ type TabId = "menu" | "deals" | "about" | "reviews" | "tour";
 interface TabContentProps {
     restaurant: any;
     aboutSlot?: ReactNode;
-    faqsSlot?: ReactNode;
     deals: any[];
     otherBranches: any[];
     hasMenu?: boolean;
     restaurantId: string;
 }
 
-export function RestaurantTabs({ restaurant, aboutSlot, faqsSlot, deals, otherBranches, hasMenu = true, restaurantId }: TabContentProps) {
+export function RestaurantTabs({ restaurant, aboutSlot, deals, otherBranches, hasMenu = true, restaurantId }: TabContentProps) {
     const [activeTab, setActiveTab] = useState<TabId>(hasMenu ? "menu" : "deals");
     const [showTourFullscreen, setShowTourFullscreen] = useState(false);
     const r = restaurant;
@@ -936,8 +935,6 @@ export function RestaurantTabs({ restaurant, aboutSlot, faqsSlot, deals, otherBr
 
                 <section id="section-about" className="scroll-mt-[130px]">
                     <AboutTab restaurant={r} otherBranches={otherBranches} aboutSlot={aboutSlot} />
-
-                    {faqsSlot}
                 </section>
 
                 <section id="section-reviews" className="scroll-mt-[130px]">
@@ -948,46 +945,7 @@ export function RestaurantTabs({ restaurant, aboutSlot, faqsSlot, deals, otherBr
     );
 }
 
-function RestaurantFaqs({ faqs, restaurantName }: { faqs: { question: string; answer: string }[]; restaurantName: string }) {
-    const [openIndex, setOpenIndex] = useState<number>(0);
 
-    return (
-        <div className="mt-3 rounded-2xl border border-gray-100 bg-white p-3 sm:p-5 shadow-sm">
-            <div className="mb-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">Quick Answers</p>
-                <h2 className="mt-1 text-base font-black tracking-tight text-gray-900">
-                    FAQs about {restaurantName}
-                </h2>
-                <p className="mt-1 text-xs leading-5 text-gray-500">
-                    Common questions diners usually check before booking, visiting, or paying.
-                </p>
-            </div>
-
-            <div className="space-y-2">
-                {faqs.map((faq, index) => {
-                    const isOpen = index === openIndex;
-                    return (
-                        <div key={faq.question} className="overflow-hidden rounded-2xl border border-gray-100 bg-gray-50/70">
-                            <button
-                                type="button"
-                                onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                                className="flex w-full items-start justify-between gap-3 px-3 py-3 text-left transition hover:bg-white sm:px-5"
-                            >
-                                <span className="text-sm font-bold leading-6 text-gray-900">{faq.question}</span>
-                                <ChevronRight className={`mt-0.5 h-4 w-4 shrink-0 text-gray-400 transition-transform ${isOpen ? "rotate-90" : ""}`} />
-                            </button>
-                            {isOpen && (
-                                <div className="border-t border-gray-100 bg-white px-3 py-3 text-sm leading-6 text-gray-600 sm:px-5">
-                                    {faq.answer}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
-}
 
 /* ─── DEALS & OFFERS TAB ─── */
 function DealsTab({ deals }: { deals: any[]; restaurant: any }) {

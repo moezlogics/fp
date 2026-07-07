@@ -7,7 +7,7 @@ import { apiClient } from "@/lib/api-client";
 import { ArchiveMapToggle } from "@/components/archive/archive-map-toggle";
 import { DealsFilterSidebar } from "@/components/archive/deals-filter-sidebar";
 import { MobileDealsControls } from "@/components/archive/mobile-deals-controls";
-import FaqSection from "@/components/ui/faq-section";
+
 import {
   buildDealsFilterQuery,
   buildBankDealCounts,
@@ -181,41 +181,7 @@ export default async function BankCityDealsPage({ params, searchParams }: Props)
   const pageUrl = `${SITE_URL}/${citySlug}/deals/${canonicalBankSlug}/`;
   const pageTitle = `Best ${bankDoc.name} Card Deals & Discounts in ${cityName}`;
 
-  const faqs: { question: string; answer: string }[] = [];
-  if (groupedDeals.length > 0) {
-    const topRestaurants = groupedDeals
-      .slice(0, 3)
-      .map((entry) => entry.restaurant?.brandName || entry.restaurant?.name)
-      .filter(Boolean);
 
-    faqs.push({
-      question: `Where can I find the best ${bankDoc.name} restaurant deals in ${cityName}?`,
-      answer:
-        topRestaurants.length > 0
-          ? `Currently, some of the top-rated restaurants offering ${bankDoc.name} discounts in ${cityName} include ${topRestaurants.join(", ")}. You can compare discount slabs for all restaurant partners above.`
-          : `You can find active ${bankDoc.name} offers on this page whenever partner restaurants publish new promotions in ${cityName}.`,
-    });
-
-    faqs.push({
-      question: `How much discount can I get with my ${bankDoc.name} card in ${cityName}?`,
-      answer: `Discounts vary by restaurant and card tier, but ${bankDoc.name} cardholders can typically enjoy between 10% to 50% flat discount on dine-in across premium restaurants in ${cityName}.`,
-    });
-
-    faqs.push({
-      question: `Do ${bankDoc.name} dining discounts apply to both credit and debit cards?`,
-      answer: `Yes, most ${bankDoc.name} dining deals apply to both credit and debit cards. However, higher tier cards (like Platinum, Signature, or Infinite) usually unlock the maximum discount percentage. Click on any restaurant offer above to view the exact card eligibility.`,
-    });
-
-    faqs.push({
-      question: `How do I avail the ${bankDoc.name} discount at a restaurant?`,
-      answer: `Simply book your table through Foodies Pakistan, enjoy your meal, and at checkout, inform the server that you are paying with your ${bankDoc.name} card to have the discount applied to your bill instantly.`,
-    });
-
-    faqs.push({
-      question: `Are these ${bankDoc.name} food deals valid on weekends in ${cityName}?`,
-      answer: `Many ${bankDoc.name} dining discounts are valid 7 days a week, but some restaurants may restrict offers on weekends or public holidays. Always check the specific deal terms on the restaurant's profile before visiting.`,
-    });
-  }
 
   const collectionPageSchema = {
     "@context": "https://schema.org",
@@ -273,25 +239,7 @@ export default async function BankCityDealsPage({ params, searchParams }: Props)
     ],
   };
 
-  const faqSchema =
-    faqs.length > 0
-      ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${pageUrl}#faq`,
-        mainEntity: faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        })),
-      }
-      : null;
-
   const schemas: any[] = [collectionPageSchema, itemListSchema, breadcrumbSchema];
-  if (faqSchema) schemas.push(faqSchema);
 
   return (
     <>
@@ -492,18 +440,6 @@ export default async function BankCityDealsPage({ params, searchParams }: Props)
             )}
           </div>
         </div>
-
-        {faqs.length > 0 && (
-          <div className="max-w-7xl mx-auto px-2.5 md:px-4 pb-6">
-            <FaqSection
-              faqs={faqs}
-              eyebrow="Common Questions"
-              title={`People also ask about ${bankDoc.name} deals in ${cityName}`}
-              description={`Quick answers to the most common questions about ${bankDoc.name} credit and debit card dining discounts in ${cityName}.`}
-              className="mt-0"
-            />
-          </div>
-        )}
       </div>
     </>
   );

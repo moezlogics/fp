@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { buildRestaurantFaqs } from "@/lib/restaurant-faqs";
-
 import { buildRestaurantSeoTitle } from "@/lib/restaurant-seo";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://foodiespakistan.pk";
@@ -76,17 +74,7 @@ export function buildRestaurantJsonLd({
     reviewBody: rev.text || undefined,
   }));
 
-  const faqs = buildRestaurantFaqs({ restaurant: r, deals, otherBranches });
 
-  const faqSchema: any = {
-    "@type": "FAQPage",
-    "@id": `${restaurantUrl}#faq`,
-    mainEntity: faqs.slice(0, 6).map((faq) => ({
-      "@type": "Question",
-      name: stripHtml(faq.question),
-      acceptedAnswer: { "@type": "Answer", text: stripHtml(faq.answer) },
-    })),
-  };
 
   const amenityFeature = (r.facilities || [])
     .filter(Boolean)
@@ -246,7 +234,6 @@ export function buildRestaurantJsonLd({
   };
 
   const graph = [restaurantWebPageSchema, restaurantSchema, breadcrumbSchema];
-  if (faqSchema.mainEntity.length > 0) graph.push(faqSchema);
 
   return {
     "@context": "https://schema.org",
